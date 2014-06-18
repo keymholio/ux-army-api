@@ -17,35 +17,18 @@ from rest_framework import status
 
 class overload(object):
     def post(self, request, *args, **kwargs ):
-        email = EmailMessage("Link to complete application", "Please go to ($link here)\nto complete your application", to=['APPLICANT@email.com'])
+        email = EmailMessage(
+            "Link to complete application", 
+            "Please go to ($link here)\nto complete your application", 
+            to=[(request.DATA).__getitem__('email')])
         email.send()
         # print(Snippet.objects.get(name = "Sarah", phone = '5555550000').name)
-        print(request)
-        print self
         return self.create(request, *args, **kwargs)
 
 
 class SnippetList(overload, generics.ListCreateAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-    # Snippet.objects.filter(name = "Sarahh").update(phone = '5555550000')
-    # print(Snippet.objects.get(name = "Sarah", phone = '5555550000').name)
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    # def pre_save(self, obj):
-    #     obj.owner = self.request.user
-# class SnippetList(mixins.ListModelMixin,
-#                   mixins.CreateModelMixin,
-#                   generics.GenericAPIView):
-#     queryset = Snippet.objects.all()
-#     serializer_class = SnippetSerializer
-
-#     def get(self, request, *args, **kwargs):
-#         return self.list(request, *args, **kwargs)
-
-#     def post(self, request, *args, **kwargs):
-#         print("POSTING")
-#         return self.create(request, *args, **kwargs)
-
 
 class overload2(object):
     # def get_object(self, pk):

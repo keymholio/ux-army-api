@@ -98,7 +98,7 @@ class SnippetSerializer_other(serializers.Serializer):
     )
     phone = serializers.CharField(
         max_length=10,
-        blank=True,
+        #blank=True,
         validators=[
             RegexValidator(
                 regex='^[0-9]*$',
