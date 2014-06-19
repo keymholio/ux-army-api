@@ -95,3 +95,20 @@ STATIC_URL = '/static/'
 EMAIL_HOST = 'localhost'
 DEFAULT_FROM_EMAIL = 'DX.LAB@gmail.com'
 EMAIL_PORT = 25
+
+{
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '50/hour',
+        'user': '100/minute'
+    }        
+}
