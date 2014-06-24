@@ -14,24 +14,25 @@ from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put
 class overload(object):
     def post(self, request, *args, **kwargs ):
         try:
-            validate_email((request.DATA).__getitem__('email'))
+            validate_email((request.DATA).__getitem__('email')) #[]
         except Exception as error:
             return self.create(request, *args, **kwargs)
-        email = EmailMessage(
-            "Link to complete application", 
-            "Please go to $LINK\nto complete your application", 
-            to=[(request.DATA).__getitem__('email')]
-        )
-        email.send()
-        return self.create(request, *args, **kwargs)
+        # email = EmailMessage(
+        #     "Link to complete application", 
+        #     "Please go to $LINK\nto complete your application", 
+        #     to=[(request.DATA).__getitem__('email')]
+        # )
+        # email.send()
+        response = self.create(request, *args, **kwargs)
+        return response
 class FormAPIList(overload, generics.ListCreateAPIView):
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
 
 class overload2(object):
     def put(self, request, pk, format=None):
-        print (request.DATA).__getitem__('name')
-        formAPI = FormAPI.objects.get(name = (request.DATA).__getitem__('name'))
+        formAPI = FormAPI.objects.get(pk = pk)
+        print formAPI.__getitem__()
         serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
         if serializer.is_valid():
             serializer.save()

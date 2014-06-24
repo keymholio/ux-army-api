@@ -101,7 +101,7 @@ EMAIL_PORT = 25
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-
+"""
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
@@ -112,3 +112,4 @@ REST_FRAMEWORK = {
         'user': '100/minute'
     }        
 }
+"""

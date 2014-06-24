@@ -1,13 +1,40 @@
 from django.db import models
 from django.core.validators import RegexValidator , validate_email, EmailValidator
 from django.core.exceptions import ValidationError
+from django.core.signing import TimestampSigner
 import datetime
+import json
+import base64
+from django.core.mail import EmailMessage
+
 
 class FormAPI(models.Model):
     def validate_year(value):
         now = datetime.datetime.now()
         if value < (now.year - 100) or value > now.year:
             raise ValidationError('%s is not a valid year' % value)
+    def createHASH(self):
+        initial = {}
+        initial['name'] = self.name
+        initial['email'] = self.email
+        initial['id'] = self.id
+
+        print self.id
+        signer = TimestampSigner()
+        initial['signed'] = signer.sign(self.email)
+        jsonresponse = json.dumps(initial)
+        
+        # print initial
+        # print jsonresponse
+        # print base64.urlsafe_b64encode(jsonresponse)
+        # email = EmailMessage(
+        #     "Link to complete application", 
+        #     "Please go to " + base64.urlsafe_b64encode(jsonresponse) +
+        #     "\nto complete your application", 
+        #     to=[self.email]
+        # )
+        # email.send()
+        return jsonresponse
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(
         max_length=100,
@@ -19,12 +46,14 @@ class FormAPI(models.Model):
             ),
         ]
     )
-    email = models.CharField(
+    email = models.EmailField(max_length = 254, 
+        unique=True, error_messages={'unique':"This email has already been registered."})
+    """models.CharField(
         max_length=100,
         validators=[
             EmailValidator(),
         ]
-    )
+    )"""
     phone = models.CharField(
         max_length=10,
         blank=True,
@@ -71,6 +100,7 @@ class FormAPI(models.Model):
     )
     birthYear = models.IntegerField(
         max_length=4,
+        null=True,
         blank=True,
         validators=[validate_year],
     )
@@ -145,7 +175,25 @@ class FormAPI(models.Model):
             ('Night time', 'Night time'),
         ]
     )
-    
+    hashInit = models.CharField(max_length=1000, editable = False)
+
+    def save(self, *args, **kwargs):
+        print self.hashInit
+        if self.hashInit == '':
+            super(FormAPI, self).save(*args, **kwargs)
+            self.hashInit = self.createHASH()
+            email = EmailMessage(
+                "Link to complete application", 
+                "Please go to " + base64.urlsafe_b64encode(self.hashInit) +
+                "\nto complete your application", 
+                to=[self.email]
+            )
+            email.send()
+            formapi = FormAPI.objects.get(pk = self.id)
+            formapi.hashInit = self.hashInit
+            formapi.save2()
+    def save2(self, *args, **kwargs):
+        super(FormAPI, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ('created',)
