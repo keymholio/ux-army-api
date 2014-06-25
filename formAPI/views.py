@@ -32,7 +32,6 @@ class FormAPIList(overload, generics.ListCreateAPIView):
 class overload2(object):
     def put(self, request, pk, format=None):
         formAPI = FormAPI.objects.get(pk = pk)
-        print formAPI.__getitem__()
         serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
         if serializer.is_valid():
             serializer.save()

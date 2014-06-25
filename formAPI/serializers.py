@@ -11,7 +11,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormAPI
         fields = (
-            'id','created',
+            'id','created', 'hashInit',
             'name', 'email', 'phone','gender','job','birthYear', 'state', 'income',
             'experience','hoursOnline','educationLevel','employment', 'participateTime',
         )
@@ -22,9 +22,9 @@ def validate_year(value):
             raise ValidationError('%s is not a valid year' % value)
 
 class FormAPI_Serializer_Put(serializers.Serializer):
-    """id = serializers.Field()
+    id = serializers.Field()
     
-    name = serializers.CharField(
+    """name = serializers.CharField(
         max_length=100,
         validators=[
             RegexValidator(

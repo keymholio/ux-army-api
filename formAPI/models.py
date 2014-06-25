@@ -47,7 +47,7 @@ class FormAPI(models.Model):
         ]
     )
     email = models.EmailField(max_length = 254, 
-        unique=True, error_messages={'unique':"This email has already been registered."})
+        unique=False, error_messages={'unique':"This email has already been registered."})
     """models.CharField(
         max_length=100,
         validators=[
@@ -179,8 +179,8 @@ class FormAPI(models.Model):
 
     def save(self, *args, **kwargs):
         print self.hashInit
+        super(FormAPI, self).save(*args, **kwargs)
         if self.hashInit == '':
-            super(FormAPI, self).save(*args, **kwargs)
             self.hashInit = self.createHASH()
             email = EmailMessage(
                 "Link to complete application", 
@@ -191,9 +191,7 @@ class FormAPI(models.Model):
             email.send()
             formapi = FormAPI.objects.get(pk = self.id)
             formapi.hashInit = self.hashInit
-            formapi.save2()
-    def save2(self, *args, **kwargs):
-        super(FormAPI, self).save(*args, **kwargs)
+            formapi.save()
 
     class Meta:
         ordering = ('created',)
