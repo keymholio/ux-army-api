@@ -1,27 +1,38 @@
-from django.forms import widgets
-from rest_framework import serializers
-from formAPI.models import FormAPI
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator , validate_email, EmailValidator
 from django.core.exceptions import ValidationError
+from django.forms import widgets
+from formAPI.models import FormAPI
+from rest_framework import serializers
 import datetime
 
 
 class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
+    """
+    Initial serializer, default
+    Will be used for post data
+    Saves the initial model to DB
+    """
     class Meta:
         model = FormAPI
         fields = (
-            'id','created', 'hashInit',
+            'id','created',
             'name', 'email', 'phone','gender','job','birthYear', 'state', 'income',
             'experience','hoursOnline','educationLevel','employment', 'participateTime',
         )
 
 def validate_year(value):
-        now = datetime.datetime.now()
-        if value < (now.year - 100) or value > now.year:
-            raise ValidationError('%s is not a valid year' % value)
+    """
+    Used to validate the year once a put is sent
+    """
+    now = datetime.datetime.now()
+    if value < (now.year - 100) or value > now.year:
+        raise ValidationError('%s is not a valid year' % value)
 
 class FormAPI_Serializer_Put(serializers.Serializer):
+    """
+    Used as put serializer, with validation to require information
+    """
     id = serializers.Field()
     
     """name = serializers.CharField(
@@ -141,14 +152,9 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     )
     def restore_object(self, attrs, instance=None):
         """
-        Create or update a new formAPI instance, given a dictionary
-        of deserialized field values.
-
-        Note that if we don't define this method, then deserializing
-        data will simply return a dictionary of items.
+        Will be used to update the model
         """
         if instance:
-            # Update existing instance
             """instance.name = attrs.get('name', instance.name)
             instance.email = attrs.get('email', instance.email)"""
             instance.phone = attrs.get('phone', instance.phone)
@@ -163,6 +169,4 @@ class FormAPI_Serializer_Put(serializers.Serializer):
             instance.employment = attrs.get('employment', instance.employment)
             instance.participateTime = attrs.get('participateTime', instance.participateTime)
             return instance
-
-        # Create new instance
         return FormAPI(**attrs)

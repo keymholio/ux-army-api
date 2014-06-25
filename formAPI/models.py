@@ -1,41 +1,47 @@
-from django.db import models
 from django.core.validators import RegexValidator , validate_email, EmailValidator
 from django.core.exceptions import ValidationError
 from django.core.signing import TimestampSigner
+from django.core.mail import EmailMessage
+from django.db import models
+import base64
 import datetime
 import json
-import base64
-from django.core.mail import EmailMessage
 
 
 class FormAPI(models.Model):
+    """
+    Class for the whole FormAPI
+    Includes all model properties which are using validation
+    """
     def validate_year(value):
+        """
+        Used to validate a specific year
+        Makes sure the year is within 100 years
+        """
         now = datetime.datetime.now()
         if value < (now.year - 100) or value > now.year:
             raise ValidationError('%s is not a valid year' % value)
+
     def createHASH(self):
+        """
+        Creates a signed value from the email
+        This signed value is based on time that will be checked
+        before a put is executed
+        """
         initial = {}
         initial['name'] = self.name
         initial['email'] = self.email
         initial['id'] = self.id
-
-        print self.id
         signer = TimestampSigner()
         initial['signed'] = signer.sign(self.email)
         jsonresponse = json.dumps(initial)
-        
-        # print initial
-        # print jsonresponse
-        # print base64.urlsafe_b64encode(jsonresponse)
-        # email = EmailMessage(
-        #     "Link to complete application", 
-        #     "Please go to " + base64.urlsafe_b64encode(jsonresponse) +
-        #     "\nto complete your application", 
-        #     to=[self.email]
-        # )
-        # email.send()
         return jsonresponse
+
+    #Created - time created
     created = models.DateTimeField(auto_now_add=True)
+
+    #Name of participant - validated to only include letters and spaces
+    #TODO include ' and -
     name = models.CharField(
         max_length=100,
         validators=[
@@ -46,14 +52,15 @@ class FormAPI(models.Model):
             ),
         ]
     )
-    email = models.EmailField(max_length = 254, 
-        unique=False, error_messages={'unique':"This email has already been registered."})
-    """models.CharField(
-        max_length=100,
-        validators=[
-            EmailValidator(),
-        ]
-    )"""
+
+    #Email of participant - validated with email regex
+    email = models.EmailField(
+        max_length = 254, 
+        unique=False, 
+        error_messages={'unique':"This email has already been registered."}
+    )
+
+    #Phone number of participant - validated to include only 10 digits
     phone = models.CharField(
         max_length=10,
         blank=True,
@@ -65,6 +72,8 @@ class FormAPI(models.Model):
             ),
         ]
     )
+
+    #Gender of participant - either Male of Female use
     gender = models.CharField(
         max_length=6, 
         blank=True, 
@@ -73,6 +82,8 @@ class FormAPI(models.Model):
             ('Female' , 'Female')
         ]
     )
+
+    #Job of participant - can only be on of provided (validated)
     job = models.CharField(
         max_length = 25,
         blank=True,
@@ -98,12 +109,16 @@ class FormAPI(models.Model):
             ('Other', 'Other'),
         ]
     )
+
+    #Birth year of participant - validated with validate_year and 4 digits
     birthYear = models.IntegerField(
         max_length=4,
         null=True,
         blank=True,
         validators=[validate_year],
     )
+
+    #State the participant resides in - validated against 50 states
     state = models.CharField(
         max_length=2, 
         blank = True, 
@@ -120,6 +135,8 @@ class FormAPI(models.Model):
             ('VA', 'VA'), ('WA', 'WA'), ('WV', 'WV'), ('WI', 'WI'), ('WY', 'WY')
         ]
     )    
+
+    #Income of participant - Must be one of 3 choices
     income = models.CharField(
         max_length=20, 
         blank=True,
@@ -129,6 +146,8 @@ class FormAPI(models.Model):
             ('$100,000 or more' , '$100,000 or more')
         ]
     )
+
+    #Experience of participant - Must be one of 3 choices
     experience = models.CharField(
         max_length=12,
         blank=True,
@@ -138,6 +157,8 @@ class FormAPI(models.Model):
             ('Expert', 'Expert'),
         ]
     )
+
+    #Hours online - Must be 1 of 12 choices
     hoursOnline = models.CharField(
         max_length=3,
         blank=True,
@@ -146,6 +167,8 @@ class FormAPI(models.Model):
             ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('10+', '10+'), 
         ]
     )
+
+    #Education level of participant
     educationLevel = models.CharField(
         max_length=15,
         blank=True,
@@ -155,6 +178,8 @@ class FormAPI(models.Model):
             ('Graduate School', 'Graduate School'),
         ]
     )
+
+    #Employment of participant
     employment = models.CharField(
         max_length=100,
         blank=True,
@@ -166,6 +191,8 @@ class FormAPI(models.Model):
             ('Unemployed', 'Unemployed'),
         ]
     )
+
+    #Time which the participant wishes to participate
     participateTime = models.CharField(
         max_length=20,
         blank=True,
@@ -175,16 +202,24 @@ class FormAPI(models.Model):
             ('Night time', 'Night time'),
         ]
     )
-    hashInit = models.CharField(max_length=1000, editable = False)
+
+    #Hash of email (signed using time)
+    hashInit = models.CharField(
+        max_length=1000, 
+        editable = False
+    )
 
     def save(self, *args, **kwargs):
-        print self.hashInit
+        """
+        Override of save to make sure hash is created with ID
+        Sends email once this is done
+        """
         super(FormAPI, self).save(*args, **kwargs)
         if self.hashInit == '':
             self.hashInit = self.createHASH()
             email = EmailMessage(
                 "Link to complete application", 
-                "Please go to " + base64.urlsafe_b64encode(self.hashInit) +
+                "Please go to http://127.0.0.1:9000/#/" + base64.urlsafe_b64encode(self.hashInit) +
                 "\nto complete your application", 
                 to=[self.email]
             )
