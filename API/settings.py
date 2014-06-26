@@ -106,15 +106,13 @@ EMAIL_HOST_PASSWORD = 'uxlabnerd1'"""
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-"""
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '50/hour',
+        'anon': '10/minute',
         'user': '100/minute'
     }        
 }
-"""

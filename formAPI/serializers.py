@@ -34,23 +34,6 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     Used as put serializer, with validation to require information
     """
     id = serializers.Field()
-    
-    """name = serializers.CharField(
-        max_length=100,
-        validators=[
-            RegexValidator(
-                regex='^[a-zA-Z ]*$',
-                message='Name must consist of characters A-Z and/or a-z',
-                code='Invalid Name'
-            ),
-        ]
-    )
-    email = serializers.CharField(
-        max_length=100,
-        validators=[
-            EmailValidator(),
-        ]
-    )"""
     phone = serializers.CharField(
         max_length=10,
         validators=[
@@ -155,8 +138,6 @@ class FormAPI_Serializer_Put(serializers.Serializer):
         Will be used to update the model
         """
         if instance:
-            """instance.name = attrs.get('name', instance.name)
-            instance.email = attrs.get('email', instance.email)"""
             instance.phone = attrs.get('phone', instance.phone)
             instance.gender = attrs.get('gender', instance.gender)
             instance.job = attrs.get('job', instance.job)
