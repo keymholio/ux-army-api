@@ -56,7 +56,7 @@ class FormAPI(models.Model):
     #Email of participant - validated with email regex
     email = models.EmailField(
         max_length = 254, 
-        unique=False, 
+        unique=True, 
         error_messages={'unique':"This email has already been registered."}
     )
 
