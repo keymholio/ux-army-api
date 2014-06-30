@@ -40,6 +40,9 @@ class FormAPI(models.Model):
     #Created - time created
     created = models.DateTimeField(auto_now_add=True)
 
+    #Owner - superusers
+    #owner = models.ForeignKey('auth.User', related_name='formAPIUsers')
+
     #Name of participant - validated to only include letters and spaces
     #TODO include ' and -
     name = models.CharField(

@@ -13,6 +13,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
     Will be used for post data
     Saves the initial model to DB
     """
+    formAPIUsers = serializers.PrimaryKeyRelatedField(many=True)
     class Meta:
         model = FormAPI
         fields = (

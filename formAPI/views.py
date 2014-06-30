@@ -9,8 +9,28 @@ from django.core.validators import validate_email
 from formAPI.models import FormAPI
 from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put
 
-class overload_post(object):
+class MyUserPermissions(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
 
+    def has_permission(self, request, view):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        print request.method
+        if request.method == 'POST':
+            return True
+        if request.method == 'GET':
+            if request.user.is_authenticated():
+                return True
+            return False
+        if request.method in permissions.SAFE_METHODS:
+            return False
+        # Instance must have an attribute named `owner`
+
+class overload_post(object):
+    permission_classes = (MyUserPermissions, )
     def post(self, request, *args, **kwargs ):
         """
         Overloading post request
@@ -20,11 +40,15 @@ class overload_post(object):
         except Exception as error:
             return self.create(request, *args, **kwargs)
         return self.create(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 class FormAPIList(overload_post, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
+    #print request.method
+    permission_classes = (MyUserPermissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
 
@@ -45,5 +69,6 @@ class FormAPIDetail(overload_put, generics.RetrieveUpdateDestroyAPIView):
     """
     Class for detail participant view
     """
+    # permission_classes = (MyUserPermissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
