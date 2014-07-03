@@ -1,10 +1,24 @@
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator , validate_email, EmailValidator
+from django.core.validators import RegexValidator 
 from django.core.exceptions import ValidationError
-from django.forms import widgets
 from formAPI.models import FormAPI
 from rest_framework import serializers
 import datetime
+
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(many=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email')
+        write_only_fields = ('password',)
+        
+    def restore_object(self, attrs, instance=None):
+        # call set_password on user object. Without this
+        # the password will be stored in plain text.
+        user = super(UserSerializer, self).restore_object(attrs, instance)
+        user.set_password(attrs['password'])
+        return user
 
 
 class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
@@ -17,9 +31,10 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormAPI
         fields = (
-            'id','created',
-            'name', 'email', 'phone','gender','job','birthYear', 'state', 'income',
-            'experience','hoursOnline','educationLevel','employment', 'participateTime',
+            'id', 'created',
+            'name', 'email', 'phone', 'gender', 'job', 'birthYear', 'state',
+            'income', 'experience', 'hoursOnline', 'educationLevel',
+            'employment', 'participateTime',
         )
 
 def validate_year(value):
@@ -47,8 +62,8 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     )
     gender = serializers.ChoiceField(
         choices=[
-            ('Male' , 'Male'),
-            ('Female' , 'Female')
+            ('Male', 'Male'),
+            ('Female', 'Female')
         ],
     )
     job = serializers.ChoiceField(
@@ -93,9 +108,9 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     )    
     income = serializers.ChoiceField(
         choices=[
-            ('Less than $40,000' , 'Less than $40,000'),
-            ('$40,000 to $100,000' , '$40,000 to $100,000'),
-            ('$100,000 or more' , '$100,000 or more')
+            ('Less than $40,000', 'Less than $40,000'),
+            ('$40,000 to $100,000', '$40,000 to $100,000'),
+            ('$100,000 or more', '$100,000 or more')
         ]
     )
     experience = serializers.ChoiceField(
