@@ -95,23 +95,11 @@ class UserDetail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
 
-# class ObtainExpiringAuthToken(ObtainAuthToken):
-#     def post(self, request):
-#         serializer = self.serializer_class(data=request.DATA)
-#         if serializer.is_valid():
-#             token, created =  Token.objects.get_or_create(user=serializer.object['user'])
-
-#             if not created:
-#                 # update the created time of the token to keep it valid
-#                 token.created = datetime.datetime.utcnow()
-#                 token.save()
-
-#             return Response({'token': token.key})
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# obtain_expiring_auth_token = ObtainExpiringAuthToken.as_view()
-
 class ObtainExpiringAuthToken(ObtainAuthToken):
+    """
+    Class to obtain auth token
+    Token should expire after a given amount of time
+    """
     def post(self, request):
         serializer_class = AuthTokenSerializer
         serializer = self.serializer_class(data=request.DATA)
