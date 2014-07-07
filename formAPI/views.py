@@ -18,8 +18,8 @@ from rest_framework.authtoken.models import Token
 from django.http import HttpResponse
 import json
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from django.utils.timezone import utc
 from rest_framework import exceptions
+from formAPI import choices
 
 
 class list_permissions(permissions.BasePermission):
@@ -34,7 +34,6 @@ class list_permissions(permissions.BasePermission):
         If user is authenticated or posting it should give permission
         Else it should return false
         """
-        print request.method
         if request.user.is_authenticated():
                 return True
         if request.method == 'POST':
@@ -76,11 +75,30 @@ class overload_put(object):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class detail_permissions(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_permission(self, request, view):
+        """
+        Checks to see whether or not to give permission
+        If user is authenticated or posting it should give permission
+        Else it should return false
+        """
+        if request.user.is_authenticated():
+                return True
+        if request.method == 'PUT':
+            return True
+        return False
+
 class FormAPIDetail(overload_put, generics.RetrieveUpdateDestroyAPIView):
     """
     Class for detail participant view
     """
-    # permission_classes = (MyUserPermissions, )
+    permission_classes = (detail_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
 
@@ -101,6 +119,9 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
     Token should expire after a given amount of time
     """
     def post(self, request):
+        """
+        Catches post request from the front end
+        """
         serializer_class = AuthTokenSerializer
         serializer = self.serializer_class(data=request.DATA)
         if serializer.is_valid():
@@ -119,3 +140,29 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         #return HttpResponse(json.dumps(response_data), status=status.HTTP_400_BAD_REQUEST)
 
 obtain_expiring_auth_token = ObtainExpiringAuthToken.as_view()
+
+class choices_overload(object):
+
+    def get(self, request, *args, **kwargs):
+        """
+        Overloading put request
+        """
+        response_data = choices.get_choices()
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+class choice_permissions(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_permission(self, request, view):
+        """
+        Checks to see whether or not to give permission
+        """
+        if request.method == 'GET':
+            return True
+        return False
+class ObtainChoices(choices_overload, generics.RetrieveAPIView):
+    permission_classes = (choice_permissions, )
+obtain_choices = ObtainChoices.as_view()
