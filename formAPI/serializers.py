@@ -1,20 +1,35 @@
+"""
+Serializers for the models used in the API
+"""
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator 
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from formAPI.models import FormAPI
 from formAPI import choices
 from rest_framework import serializers
 import datetime
 
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Main serializer for the user model
+    """
     snippets = serializers.PrimaryKeyRelatedField(many=True)
 
     class Meta:
+        """
+        Serializes the user
+        Sets the password to write only
+        """
         model = User
-        fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email')
+        fields = \
+            ('id', 'username', 'password', 'first_name', 'last_name', 'email')
         write_only_fields = ('password',)
-        
+
     def restore_object(self, attrs, instance=None):
+        """
+        Used to set password and return the user
+        """
         user = super(UserSerializer, self).restore_object(attrs, instance)
         user.set_password(attrs['password'])
         return user
@@ -27,6 +42,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
     Saves the initial model to DB
     """
     formAPIUsers = serializers.PrimaryKeyRelatedField(many=True)
+
     class Meta:
         model = FormAPI
         fields = (
@@ -36,6 +52,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'employment', 'participateTime',
         )
 
+
 def validate_year(value):
     """
     Used to validate the year once a put is sent
@@ -43,6 +60,7 @@ def validate_year(value):
     now = datetime.datetime.now()
     if value < (now.year - 100) or value > now.year:
         raise ValidationError('%s is not a valid year' % value)
+
 
 class FormAPI_Serializer_Put(serializers.Serializer):
     """
@@ -89,6 +107,7 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     participateTime = serializers.ChoiceField(
         choices=choices.PARTICIPATE_TIME_CHOICES
     )
+
     def restore_object(self, attrs, instance=None):
         """
         Will be used to update the model
@@ -101,9 +120,13 @@ class FormAPI_Serializer_Put(serializers.Serializer):
             instance.state = attrs.get('state', instance.state)
             instance.income = attrs.get('income', instance.income)
             instance.experience = attrs.get('experience', instance.experience)
-            instance.hoursOnline = attrs.get('hoursOnline', instance.hoursOnline)
-            instance.educationLevel = attrs.get('educationLevel', instance.educationLevel)
-            instance.employment = attrs.get('employment', instance.employment)
-            instance.participateTime = attrs.get('participateTime', instance.participateTime)
+            instance.hoursOnline = \
+                attrs.get('hoursOnline', instance.hoursOnline)
+            instance.educationLevel = \
+                attrs.get('educationLevel', instance.educationLevel)
+            instance.employment = \
+                attrs.get('employment', instance.employment)
+            instance.participateTime = \
+                attrs.get('participateTime', instance.participateTime)
             return instance
         return FormAPI(**attrs)
