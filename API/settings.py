@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'formAPI',
     'rest_framework.authtoken',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,6 +49,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'API.urls'
@@ -117,7 +119,10 @@ REST_FRAMEWORK = {
         'user': '100/minute'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        #leaving this in for now so we can use the API
         'rest_framework.authentication.SessionAuthentication',
         'formAPI.tokenAuth.ExpiringTokenAuth',
     )
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
