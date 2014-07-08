@@ -1,18 +1,15 @@
-from django.core.validators import RegexValidator , validate_email, EmailValidator
+"""
+Main model class for the participants
+"""
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.core.signing import TimestampSigner
 from django.core.mail import EmailMessage
 from django.db import models
+from formAPI import choices
 import base64
 import datetime
 import json
-from formAPI import choices
-
-from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
-
 
 class FormAPI(models.Model):
     """
@@ -46,25 +43,22 @@ class FormAPI(models.Model):
     #Created - time created
     created = models.DateTimeField(auto_now_add=True)
 
-    #Owner - superusers
-    #owner = models.ForeignKey('auth.User', related_name='formAPIUsers')
-
-    #Name of participant - validated to only include letters and spaces
-    #TODO include ' and -
+    #Removed validator for now, names can include many differerent characters
+    #Name - name of participants
     name = models.CharField(
         max_length=100,
-        validators=[
-            RegexValidator(
-                regex='^[a-zA-Z ]*$',
-                message='Name must consist of characters A-Z and/or a-z',
-                code='Invalid Name'
-            ),
-        ]
+        # validators=[
+        #     RegexValidator(
+        #         regex='^[a-zA-Z ]*$',
+        #         message='Name must consist of characters A-Z and/or a-z',
+        #         code='Invalid Name'
+        #     ),
+        # ]
     )
 
     #Email of participant - validated with email regex
     email = models.EmailField(
-        max_length = 254, 
+        max_length=254, 
         unique=True, 
         error_messages={'unique':"This email has already been registered."}
     )
@@ -91,7 +85,7 @@ class FormAPI(models.Model):
 
     #Job of participant - can only be on of provided (validated)
     job = models.CharField(
-        max_length = 25,
+        max_length=25,
         blank=True,
         choices=choices.JOB_CHOICES
     )
@@ -107,7 +101,7 @@ class FormAPI(models.Model):
     #State the participant resides in - validated against 50 states
     state = models.CharField(
         max_length=2, 
-        blank = True, 
+        blank=True, 
         choices=choices.STATE_CHOICES
     )    
 
@@ -169,7 +163,8 @@ class FormAPI(models.Model):
             self.hashInit = self.createHASH()
             email = EmailMessage(
                 "Link to complete application", 
-                "Please go to http://127.0.0.1:9000/#/" + base64.urlsafe_b64encode(self.hashInit) +
+                "Please go to http://127.0.0.1:9000/#/" + \
+                base64.urlsafe_b64encode(self.hashInit) +
                 "\nto complete your application", 
                 to=[self.email]
             )
