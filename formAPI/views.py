@@ -193,3 +193,17 @@ class ObtainChoices(choices_overload, generics.RetrieveAPIView):
     """
     permission_classes = (choice_permissions, )
 obtain_choices = ObtainChoices.as_view()
+
+
+class Logout(generics.CreateAPIView):
+    """
+    Logout
+    """
+    def post(self, request):
+        """
+        Catches post request from the front end
+        """
+        response_data = {}
+        return HttpResponse(json.dumps(response_data), \
+        content_type="application/json")
+logout = Logout.as_view()
