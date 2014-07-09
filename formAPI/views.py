@@ -203,9 +203,6 @@ class Logout(generics.CreateAPIView):
         """
         Catches post request from the front end
         """
-        print request
-        print request.DATA
-        print (request.DATA).token
         response_data = {}
         return HttpResponse(json.dumps(response_data), \
         content_type="application/json")
