@@ -173,7 +173,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 Token.objects.get_or_create(user=serializer.object['user'])
             utc_now = datetime.datetime.utcnow().replace(tzinfo=utc)
             if not created and \
-            token.created < utc_now - datetime.timedelta(minutes=1):
+            token.created < utc_now - datetime.timedelta(minutes=5):
                 token.delete()
                 token = Token.objects.create(user=serializer.object['user'])
                 token.created = datetime.datetime.utcnow().replace(tzinfo=utc)
@@ -203,6 +203,9 @@ class Logout(generics.CreateAPIView):
         """
         Catches post request from the front end
         """
+        print request
+        print request.DATA
+        print (request.DATA).token
         response_data = {}
         return HttpResponse(json.dumps(response_data), \
         content_type="application/json")
