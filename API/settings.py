@@ -61,9 +61,9 @@ WSGI_APPLICATION = 'API.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'UXLABS',
-	    'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'dbtee4dpl68kaj',
+	    'USER': 'ztqtceotigfyky',
+        'PASSWORD': 'J3Ojg31yW5XcdSahzwSAjZCOF2',
         'HOST': 'localhost',
         'PORT': '5432',
     }
