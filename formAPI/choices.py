@@ -2,6 +2,7 @@
 File used to specify various choices
 """
 import datetime
+
 YEAR_RANGE = 101
 GENDER_CHOICES = [
     ('Male', 'Male'),
