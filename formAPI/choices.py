@@ -5,8 +5,8 @@ import datetime
 
 YEAR_RANGE = 101
 GENDER_CHOICES = [
+    ('Female', 'Female'),
     ('Male', 'Male'),
-    ('Female', 'Female')
 ]
 
 JOB_CHOICES = [
