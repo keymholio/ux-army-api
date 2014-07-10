@@ -110,11 +110,14 @@ class choice_permissions(permissions.BasePermission):
     Object-level permission to only allow owners of an object to edit it.
     Assumes the model instance has an `owner` attribute.
     """
-
     def has_permission(self, request, view):
         """
         Checks to see whether or not to give permission
         """
+        if request.user.is_authenticated():
+            print 'IS'
+        if not request.user.is_authenticated():
+            print 'IS NOT'
         if request.method == 'GET':
             return True
         return False
@@ -191,7 +194,8 @@ class ObtainChoices(choices_overload, generics.RetrieveAPIView):
     Obtains choices from backend
     Does not allow anything other than GET
     """
-    permission_classes = (choice_permissions, )
+    #permission_classes = (choice_permissions, )
+    permission_classes = (permissions.AllowAny,)
 obtain_choices = ObtainChoices.as_view()
 
 #Leaving this here for future use

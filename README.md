@@ -10,3 +10,5 @@ Requrired Packages:
 -Django Rest Framework (Latest)
 
 -Django CORS Headers
+
+-Psycopg2 (for postgres)

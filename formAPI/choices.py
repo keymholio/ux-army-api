@@ -1,6 +1,8 @@
 """
 File used to specify various choices
 """
+import datetime
+YEAR_RANGE = 101
 GENDER_CHOICES = [
     ('Male', 'Male'),
     ('Female', 'Female')
@@ -105,7 +107,7 @@ def get_choices():
         'employmentChoices',
         'participateTimeChoices'
     ]
-    single_response = {
+    response = {
         'genderChoices': [],
         'jobChoices': [],
         'stateChoices': [],
@@ -115,24 +117,14 @@ def get_choices():
         'educationLevelChoices': [],
         'employmentChoices': [],
         'participateTimeChoices': [],
+        'birthYear': [],
     }
     count = 0
     for choice in all_choices:
         for option in choice:
-            single_response[var_choices[count]].append(option[0])
+            response[var_choices[count]].append(option[0])
         count += 1
-
-    #LEAVING THIS HERE FOR POSSIBLE FUTURE USE
-    #WILL BE REMOVED
-    # response = {
-    #     'genderChoices': GENDER_CHOICES,
-    #     'jobChoices': JOB_CHOICES,
-    #     'stateChoices': STATE_CHOICES,
-    #     'incomeChoices': INCOME_CHOICES,
-    #     'experienceChoices': EXPERIENCE_CHOICES,
-    #     'hoursOnlineChoices': HOURS_ONLINE_CHOICES,
-    #     'educationLevelChoices': EDUCATION_LEVEL_CHOICES,
-    #     'employmentChoices': EMPLOYMENT_CHOICES,
-    #     'participateTimeChoices': PARTICIPATE_TIME_CHOICES,
-    # }
-    return single_response
+    now = datetime.datetime.now()
+    for n in range(YEAR_RANGE):
+        response['birthYear'].append(now.year - n)
+    return response
