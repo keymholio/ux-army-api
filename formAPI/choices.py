@@ -117,7 +117,7 @@ def get_choices():
         'educationLevelChoices': [],
         'employmentChoices': [],
         'participateTimeChoices': [],
-        'birthYear': [],
+        'birthYearChoices': [],
     }
     count = 0
     for choice in all_choices:
@@ -125,6 +125,6 @@ def get_choices():
             response[var_choices[count]].append(option[0])
         count += 1
     now = datetime.datetime.now()
-    for n in range(YEAR_RANGE):
-        response['birthYear'].append(now.year - n)
+    for years_to_subtract in range(YEAR_RANGE):
+        response['birthYear'].append(now.year - years_to_subtract)
     return response
