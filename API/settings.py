@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+UX_DB_NAME = os.environ.get("UX_DB_NAME")
 
 
 # Quick-start development settings - unsuitable for production
@@ -61,10 +62,10 @@ WSGI_APPLICATION = 'API.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbtee4dpl68kaj',
-	    'USER': 'mtyzzfawdyzwjd',
-        'PASSWORD': 'ye51rJIHqOZ3J7eA4tikTfFETw',
-        'HOST': 'ec2-54-197-241-91.compute-1.amazonaws.com',
+        'NAME': os.environ.get("UX_DB_NAME"),
+	    'USER': os.environ.get("UX_DB_USER"),
+        'PASSWORD': os.environ.get("UX_DB_PASSWORD"),
+        'HOST': os.environ.get("UX_DB_HOST"),
         'PORT': '5432',
     }
 }
