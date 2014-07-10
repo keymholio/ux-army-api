@@ -4,9 +4,9 @@ Serializers for the models used in the API
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from rest_framework import serializers
 from formAPI.models import FormAPI
 from formAPI import choices
-from rest_framework import serializers
 import datetime
 
 
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         """
         model = User
         fields = \
-            ('id', 'username', 'password', 'first_name', 'last_name', 'email')
+            ('id', 'username', 'password', 'first_name', 'last_name', 'email', )
         write_only_fields = ('password',)
 
     def restore_object(self, attrs, instance=None):

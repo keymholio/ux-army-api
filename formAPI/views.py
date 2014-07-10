@@ -2,9 +2,9 @@
 Main views class for the UX LABS API
 """
 from django.contrib.auth.models import User
-from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.utils.timezone import utc
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -194,16 +194,36 @@ class ObtainChoices(choices_overload, generics.RetrieveAPIView):
     permission_classes = (choice_permissions, )
 obtain_choices = ObtainChoices.as_view()
 
+#Leaving this here for future use
+# class Logout(generics.CreateAPIView):
+#     """
+#     Logout
+#     """
+#     def post(self, request):
+#         """
+#         Catches post request from the front end
+#         """
+#         response_data = {}
+#         return HttpResponse(json.dumps(response_data), \
+#         content_type="application/json")
+# logout = Logout.as_view()
 
-class Logout(generics.CreateAPIView):
+@csrf_exempt
+def logout(request):
     """
-    Logout
+    Used to logout
+    CSRF is exempt (only internal)
     """
-    def post(self, request):
-        """
-        Catches post request from the front end
-        """
+    if request.method == 'POST':
+        auth_header = request.META.get('HTTP_AUTHORIZATION', None)
+        if auth_header is not None:
+            tokens = auth_header.split(' ')
+            if len(tokens) == 2 and tokens[0] == 'Token':
+                token = tokens[1]
+                user = User.objects.filter(auth_token=token)
+                if user .count() != 0:
+                    token = Token.objects.get_or_create(user=user)[0]
+                    token.delete()
         response_data = {}
         return HttpResponse(json.dumps(response_data), \
         content_type="application/json")
-logout = Logout.as_view()
