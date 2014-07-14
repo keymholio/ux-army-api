@@ -65,7 +65,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ["UX_DB_NAME"],
-	    'USER': os.environ["UX_DB_USER"],
+        'USER': os.environ["UX_DB_USER"],
         'PASSWORD': os.environ["UX_DB_PASSWORD"],
         'HOST': os.environ["UX_DB_HOST"],
         'PORT': '5432',
@@ -96,14 +96,14 @@ STATIC_URL = '/static/'
 #     'PAGINATE_BY': 10
 # }
 
-EMAIL_HOST = 'localhost'
+"""EMAIL_HOST = 'localhost'
 DEFAULT_FROM_EMAIL = 'DX.LAB@gmail.com'
-EMAIL_PORT = 25
-"""EMAIL_USE_TLS = True
+EMAIL_PORT = 25"""
+EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
-EMAIL_HOST_PASSWORD = 'uxlabnerd1'"""
+EMAIL_HOST_PASSWORD = 'uxlabnerd1'
 
 {
     'default': {
