@@ -1,19 +1,35 @@
+"""
+Serializers for the models used in the API
+"""
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator 
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from formAPI.models import FormAPI
 from rest_framework import serializers
+from formAPI.models import FormAPI
+from formAPI import choices
 import datetime
 
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Main serializer for the user model
+    """
     snippets = serializers.PrimaryKeyRelatedField(many=True)
 
     class Meta:
+        """
+        Serializes the user
+        Sets the password to write only
+        """
         model = User
-        fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email')
+        fields = \
+            ('id', 'username', 'password', 'first_name', 'last_name', 'email', )
         write_only_fields = ('password',)
-        
+
     def restore_object(self, attrs, instance=None):
+        """
+        Used to set password and return the user
+        """
         user = super(UserSerializer, self).restore_object(attrs, instance)
         user.set_password(attrs['password'])
         return user
@@ -26,6 +42,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
     Saves the initial model to DB
     """
     formAPIUsers = serializers.PrimaryKeyRelatedField(many=True)
+
     class Meta:
         model = FormAPI
         fields = (
@@ -35,6 +52,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'employment', 'participateTime',
         )
 
+
 def validate_year(value):
     """
     Used to validate the year once a put is sent
@@ -42,6 +60,7 @@ def validate_year(value):
     now = datetime.datetime.now()
     if value < (now.year - 100) or value > now.year:
         raise ValidationError('%s is not a valid year' % value)
+
 
 class FormAPI_Serializer_Put(serializers.Serializer):
     """
@@ -59,94 +78,36 @@ class FormAPI_Serializer_Put(serializers.Serializer):
         ]
     )
     gender = serializers.ChoiceField(
-        choices=[
-            ('Male', 'Male'),
-            ('Female', 'Female')
-        ],
+        choices=choices.GENDER_CHOICES
     )
     job = serializers.ChoiceField(
-        choices=[
-            ('BDC Manager', 'BDC Manager'), 
-            ('Controller', 'Controller'),
-            ('Dealertrack Employee', 'Dealertrack Employee'),
-            ('Entry Level Technician', 'Entry Level Technician'),
-            ('F&I Director', 'F&I Director'),
-            ('F&I Manager', 'F&I Manager'),
-            ('Fixed Operations Director', 'Fixed Operations Director'),
-            ('General Manager', 'General Manager'),
-            ('Internet Director', 'Internet Director'),
-            ('Office Manager', 'Office Manager'),
-            ('Parts Advisor', 'Parts Advisor'),
-            ('Parts Manager', 'Parts Manager'),
-            ('Receptionist', 'Receptionist'),
-            ('Sales Consultant', 'Sales Consultant'),
-            ('Sales Manager', 'Sales Manager'),
-            ('Service Advisor', 'Service Advisor'),
-            ('Service Manager', 'Service Manager'),
-            ('Title Clerk', 'Title Clerk'),
-            ('Other', 'Other'),
-        ]
+        choices=choices.JOB_CHOICES
     )
     birthYear = serializers.IntegerField(
         validators=[validate_year],
     )
     state = serializers.ChoiceField(
-        choices=[
-            ('AL', 'AL'), ('AK', 'AK'), ('AZ', 'AZ'), ('AR', 'AR'), ('CA', 'CA'), 
-            ('CO', 'CO'), ('CT', 'CT'), ('DE', 'DE'), ('FL', 'FL'), ('GA', 'GA'),
-            ('HI', 'HI'), ('ID', 'ID'), ('IL', 'IL'), ('IN', 'IN'), ('IA', 'IA'),
-            ('KS', 'KS'), ('KY', 'KY'), ('LA', 'LA'), ('ME', 'ME'), ('MD', 'MD'),
-            ('MA', 'MA'), ('MI', 'MI'), ('MN', 'MN'), ('MS', 'MS'), ('MO', 'MO'),
-            ('MT', 'MT'), ('NE', 'NE'), ('NV', 'NV'), ('NH', 'NH'), ('NJ', 'NJ'),
-            ('NM', 'NM'), ('NY', 'NY'), ('NC', 'NC'), ('ND', 'ND'), ('OH', 'OH'),
-            ('OK', 'OK'), ('OR', 'OR'), ('PA', 'PA'), ('RI', 'RI'), ('SC', 'SC'),
-            ('SD', 'SD'), ('TN', 'TN'), ('TX', 'TX'), ('UT', 'UT'), ('VT', 'VT'),
-            ('VA', 'VA'), ('WA', 'WA'), ('WV', 'WV'), ('WI', 'WI'), ('WY', 'WY')
-        ]
-    )    
+        choices=choices.STATE_CHOICES
+    )
     income = serializers.ChoiceField(
-        choices=[
-            ('Less than $40,000', 'Less than $40,000'),
-            ('$40,000 to $100,000', '$40,000 to $100,000'),
-            ('$100,000 or more', '$100,000 or more')
-        ]
+        choices=choices.INCOME_CHOICES
     )
     experience = serializers.ChoiceField(
-        choices=[
-            ('Beginner', 'Beginner'),
-            ('Intermediate', 'Intermediate'),
-            ('Expert', 'Expert'),
-        ]
+        choices=choices.EXPERIENCE_CHOICES
     )
     hoursOnline = serializers.ChoiceField(
-        choices=[
-            ('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), 
-            ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('10+', '10+'), 
-        ]
+        choices=choices.HOURS_ONLINE_CHOICES
     )
     educationLevel = serializers.ChoiceField(
-        choices=[
-            ('High School', 'High School'),
-            ('College', 'College'),
-            ('Graduate School', 'Graduate School'),
-        ]
+        choices=choices.EDUCATION_LEVEL_CHOICES
     )
     employment = serializers.ChoiceField(
-        choices=[
-            ('Employed at home', 'Employed at home'),
-            ('Employed in an office', 'Employed in an office'),
-            ('Employed outside an office', 'Employed outside an office'),
-            ('In school', 'In school'),
-            ('Unemployed', 'Unemployed'),
-        ]
+        choices=choices.EMPLOYMENT_CHOICES
     )
     participateTime = serializers.ChoiceField(
-        choices=[
-            ('Mornings', 'Mornings'),
-            ('Afternoons', 'Afternoons'),
-            ('Night time', 'Night time'),
-        ]
+        choices=choices.PARTICIPATE_TIME_CHOICES
     )
+
     def restore_object(self, attrs, instance=None):
         """
         Will be used to update the model
@@ -159,9 +120,13 @@ class FormAPI_Serializer_Put(serializers.Serializer):
             instance.state = attrs.get('state', instance.state)
             instance.income = attrs.get('income', instance.income)
             instance.experience = attrs.get('experience', instance.experience)
-            instance.hoursOnline = attrs.get('hoursOnline', instance.hoursOnline)
-            instance.educationLevel = attrs.get('educationLevel', instance.educationLevel)
-            instance.employment = attrs.get('employment', instance.employment)
-            instance.participateTime = attrs.get('participateTime', instance.participateTime)
+            instance.hoursOnline = \
+                attrs.get('hoursOnline', instance.hoursOnline)
+            instance.educationLevel = \
+                attrs.get('educationLevel', instance.educationLevel)
+            instance.employment = \
+                attrs.get('employment', instance.employment)
+            instance.participateTime = \
+                attrs.get('participateTime', instance.participateTime)
             return instance
         return FormAPI(**attrs)
