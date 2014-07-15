@@ -146,7 +146,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    #permission_classes = (user_permissions, )
+    permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -155,7 +155,7 @@ class UserDetail(generics.RetrieveAPIView):
     """
     Detailed user view
     """
-    #permission_classes = (user_permissions, )
+    permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
