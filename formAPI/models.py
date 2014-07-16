@@ -168,6 +168,10 @@ class FormAPI(models.Model):
                 "\nto complete your application", 
                 to=[self.email]
             )
+            email.template_name = "confirmation email"
+            email.global_merge_vars = {'NAME': self.name}
+            email.use_template_subject = True
+            email.use_template_from = True
             email.send()
             formapi = FormAPI.objects.get(pk = self.id)
             formapi.hashInit = self.hashInit
