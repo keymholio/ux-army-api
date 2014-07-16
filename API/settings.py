@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'formAPI',
     'rest_framework.authtoken',
     'corsheaders',
+    "djrill",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,11 +100,13 @@ STATIC_URL = '/static/'
 """EMAIL_HOST = 'localhost'
 DEFAULT_FROM_EMAIL = 'DX.LAB@gmail.com'
 EMAIL_PORT = 25"""
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
-EMAIL_HOST_PASSWORD = 'uxlabnerd1'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
+# EMAIL_HOST_PASSWORD = 'uxlabnerd1'
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
 
 {
     'default': {
