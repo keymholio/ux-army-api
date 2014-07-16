@@ -160,8 +160,6 @@ class FormAPI(models.Model):
         """
         super(FormAPI, self).save(*args, **kwargs)
         if self.hashInit == '':
-            link = "http://127.0.0.1:9000/#/" + \
-                base64.urlsafe_b64encode(self.hashInit) 
             self.hashInit = self.createHASH()
             email = EmailMessage(
                 # "Link to complete application", 
@@ -171,6 +169,8 @@ class FormAPI(models.Model):
                 to=[self.email]
             )
             email.template_name = "confirmation email"
+            link = "http://127.0.0.1:9000/#/" + \
+                base64.urlsafe_b64encode(self.hashInit) 
             email.global_merge_vars = {'URL': link}
             email.use_template_subject = True
             email.use_template_from = True
