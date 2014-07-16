@@ -105,6 +105,7 @@ EMAIL_PORT = 25"""
 # EMAIL_PORT = 587
 # EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
 # EMAIL_HOST_PASSWORD = 'uxlabnerd1'
+DEFAULT_FROM_EMAIL = "uxlab.nerd.1@gmail.com"
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
 
