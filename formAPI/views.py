@@ -101,9 +101,10 @@ class user_permissions(permissions.BasePermission):
         Checks to see whether or not to give permission
         only allow if auth
         """
-        if request.user.is_authenticated():
-            return True
-        return False
+        # if request.user.is_authenticated():
+        #     return True
+        # return False
+        return True
 
 class choice_permissions(permissions.BasePermission):
     """
