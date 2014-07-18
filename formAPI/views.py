@@ -59,8 +59,8 @@ class choices_overload(object):
 #Permissions
 class list_permissions(permissions.BasePermission):
     """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
+    Permission for the list
+    Allowed if authenticated or 'POST'
     """
     def has_permission(self, request, view):
         """
@@ -76,8 +76,9 @@ class list_permissions(permissions.BasePermission):
 
 class detail_permissions(permissions.BasePermission):
     """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
+    Permission will be granted to:
+    Authenticated users,
+    Requests originating from a 'PUT'
     """
     def has_permission(self, request, view):
         """
@@ -93,8 +94,7 @@ class detail_permissions(permissions.BasePermission):
 
 class user_permissions(permissions.BasePermission):
     """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
+    Permission will be granted only to authenticated users
     """
     def has_permission(self, request, view):
         """
@@ -107,17 +107,12 @@ class user_permissions(permissions.BasePermission):
 
 class choice_permissions(permissions.BasePermission):
     """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
+    Allows user to do a get regardless of authenticated or not
     """
     def has_permission(self, request, view):
         """
         Checks to see whether or not to give permission
         """
-        if request.user.is_authenticated():
-            print 'IS'
-        if not request.user.is_authenticated():
-            print 'IS NOT'
         if request.method == 'GET':
             return True
         return False
@@ -198,27 +193,15 @@ class ObtainChoices(choices_overload, generics.RetrieveAPIView):
     permission_classes = (permissions.AllowAny,)
 obtain_choices = ObtainChoices.as_view()
 
-#Leaving this here for future use
-# class Logout(generics.CreateAPIView):
-#     """
-#     Logout
-#     """
-#     def post(self, request):
-#         """
-#         Catches post request from the front end
-#         """
-#         response_data = {}
-#         return HttpResponse(json.dumps(response_data), \
-#         content_type="application/json")
-# logout = Logout.as_view()
-
-@csrf_exempt
-def logout(request):
+# Leaving this here for future use
+class Logout(generics.CreateAPIView):
     """
-    Used to logout
-    CSRF is exempt (only internal)
+    Logout
     """
-    if request.method == 'POST':
+    def post(self, request):
+        """
+        Catches post request from the front end
+        """
         auth_header = request.META.get('HTTP_AUTHORIZATION', None)
         if auth_header is not None:
             tokens = auth_header.split(' ')
@@ -230,4 +213,49 @@ def logout(request):
                     token.delete()
         response_data = {}
         return HttpResponse(json.dumps(response_data), \
-        content_type="application/json")
+            content_type="application/json")
+logout = Logout.as_view()
+
+# @csrf_exempt
+# def logout(request):
+#     """
+#     Used to logout
+#     CSRF is exempt (only internal)
+#     """
+#     if request.method == 'POST':
+#         auth_header = request.META.get('HTTP_AUTHORIZATION', None)
+#         if auth_header is not None:
+#             tokens = auth_header.split(' ')
+#             if len(tokens) == 2 and tokens[0] == 'Token':
+#                 token = tokens[1]
+#                 user = User.objects.filter(auth_token=token)
+#                 if user .count() != 0:
+#                     token = Token.objects.get_or_create(user=user)[0]
+#                     token.delete()
+#         response_data = {}
+#         return HttpResponse(json.dumps(response_data), \
+#         content_type="application/json")
+
+
+class CheckValidSignUp(generics.CreateAPIView):
+    """
+    Checks if user should be able to sign up or not
+    Returns id, name, email if allowed
+    Else it returns a 400 - Bad Request
+    """
+    def post(self, request):
+        """
+        Catches post request from the front end
+        """
+        try:
+            encoded_data = request.DATA[ 'hashed']
+            participant_to_check =  FormAPI.objects.filter(hashInit = encoded_data).values()[0]
+            response_data = {}
+            response_data['id'] = participant_to_check['id']
+            response_data['name'] = participant_to_check['name']
+            response_data['email'] = participant_to_check['email']
+            return HttpResponse(json.dumps(response_data), \
+                content_type="application/json")
+        except Exception:
+            return HttpResponse("Already filled out", status=status.HTTP_400_BAD_REQUEST)
+check_valid_sign_up = CheckValidSignUp.as_view()

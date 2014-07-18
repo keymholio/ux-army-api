@@ -16,7 +16,8 @@ urlpatterns = patterns('',
 		views.UserDetail.as_view()),
     url(r'^login/', 'formAPI.views.obtain_expiring_auth_token'),
     url(r'^choices/', 'formAPI.views.obtain_choices'),
-    url(r'^logout/', 'formAPI.views.logout')
+    url(r'^logout/', 'formAPI.views.logout'),
+    url(r'^demo-form-check/', 'formAPI.views.check_valid_sign_up')
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
