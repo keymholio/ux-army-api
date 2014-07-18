@@ -107,6 +107,9 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     participateTime = serializers.ChoiceField(
         choices=choices.PARTICIPATE_TIME_CHOICES
     )
+    completed_initial = serializers.BooleanField(
+        default=True
+    )
 
     def restore_object(self, attrs, instance=None):
         """
@@ -128,5 +131,7 @@ class FormAPI_Serializer_Put(serializers.Serializer):
                 attrs.get('employment', instance.employment)
             instance.participateTime = \
                 attrs.get('participateTime', instance.participateTime)
+            instance.completed_initial = \
+                attrs.get('completed_initial', instance.completed_initial)
             return instance
         return FormAPI(**attrs)

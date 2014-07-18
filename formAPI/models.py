@@ -3,12 +3,12 @@ Main model class for the participants
 """
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from django.core.signing import TimestampSigner
 from django.core.mail import EmailMessage
 from django.db import models
 from formAPI import choices
 import base64
 import datetime
+import hashlib
 import json
 
 class FormAPI(models.Model):
@@ -27,33 +27,21 @@ class FormAPI(models.Model):
 
     def createHASH(self):
         """
-        Creates a signed value from the email
-        This signed value is based on time that will be checked
-        before a put is executed
+        Creates a hashed value to check
         """
         initial = {}
         initial['name'] = self.name
         initial['email'] = self.email
         initial['id'] = self.id
-        signer = TimestampSigner()
-        initial['signed'] = signer.sign(self.email)
         jsonresponse = json.dumps(initial)
         return jsonresponse
 
     #Created - time created
     created = models.DateTimeField(auto_now_add=True)
 
-    #Removed validator for now, names can include many differerent characters
     #Name - name of participants
     name = models.CharField(
         max_length=100,
-        # validators=[
-        #     RegexValidator(
-        #         regex='^[a-zA-Z ]*$',
-        #         message='Name must consist of characters A-Z and/or a-z',
-        #         code='Invalid Name'
-        #     ),
-        # ]
     )
 
     #Email of participant - validated with email regex
@@ -153,6 +141,12 @@ class FormAPI(models.Model):
         editable=False
     )
 
+    #Has completed inital sign up
+    completed_initial = models.BooleanField(
+        default=False,
+        editable=False
+    )
+
     def save(self, *args, **kwargs):
         """
         Override of save to make sure hash is created with ID
@@ -160,12 +154,10 @@ class FormAPI(models.Model):
         """
         super(FormAPI, self).save(*args, **kwargs)
         if self.hashInit == '':
-            self.hashInit = self.createHASH()
+            hasher = hashlib.sha512()
+            hasher.update(self.createHASH())
+            self.hashInit = hasher.hexdigest()
             email = EmailMessage(
-                # "Link to complete application", 
-                # "Please go to http://127.0.0.1:9000/#/" + \
-                # base64.urlsafe_b64encode(self.hashInit) +
-                # "\nto complete your application", 
                 to=[self.email]
             )
             email.template_name = "confirmation email"
