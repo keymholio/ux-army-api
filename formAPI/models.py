@@ -3,7 +3,6 @@ Main model class for the participants
 """
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from django.core.signing import TimestampSigner
 from django.core.mail import EmailMessage
 from django.db import models
 from formAPI import choices
