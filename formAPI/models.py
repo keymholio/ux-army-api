@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.db import models
 from formAPI import choices
-import base64
 import datetime
 import hashlib
 import json

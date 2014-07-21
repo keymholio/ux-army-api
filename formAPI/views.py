@@ -4,7 +4,6 @@ Main views class for the UX LABS API
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.timezone import utc
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -42,6 +41,9 @@ class overload_list(object):
         """
         return self.create(request, *args, **kwargs)
     def get(self, request, *args, **kwargs):
+        """
+        Return list of participants
+        """
         return self.list(request, *args, **kwargs)
 
 class choices_overload(object):
@@ -216,27 +218,6 @@ class Logout(generics.CreateAPIView):
             content_type="application/json")
 logout = Logout.as_view()
 
-# @csrf_exempt
-# def logout(request):
-#     """
-#     Used to logout
-#     CSRF is exempt (only internal)
-#     """
-#     if request.method == 'POST':
-#         auth_header = request.META.get('HTTP_AUTHORIZATION', None)
-#         if auth_header is not None:
-#             tokens = auth_header.split(' ')
-#             if len(tokens) == 2 and tokens[0] == 'Token':
-#                 token = tokens[1]
-#                 user = User.objects.filter(auth_token=token)
-#                 if user .count() != 0:
-#                     token = Token.objects.get_or_create(user=user)[0]
-#                     token.delete()
-#         response_data = {}
-#         return HttpResponse(json.dumps(response_data), \
-#         content_type="application/json")
-
-
 class CheckValidSignUp(generics.CreateAPIView):
     """
     Checks if user should be able to sign up or not
@@ -248,14 +229,18 @@ class CheckValidSignUp(generics.CreateAPIView):
         Catches post request from the front end
         """
         try:
-            encoded_data = request.DATA[ 'hashed']
-            participant_to_check =  FormAPI.objects.filter(hashInit = encoded_data).values()[0]
+            encoded_data = request.DATA['hashed']
+            participant_to_check =  FormAPI.objects.get(hashInit = encoded_data)
+            assert participant_to_check.completed_initial == False
             response_data = {}
-            response_data['id'] = participant_to_check['id']
-            response_data['name'] = participant_to_check['name']
-            response_data['email'] = participant_to_check['email']
+            response_data['id'] = participant_to_check.id
+            response_data['name'] = participant_to_check.name
+            response_data['email'] = participant_to_check.email
             return HttpResponse(json.dumps(response_data), \
                 content_type="application/json")
         except Exception:
-            return HttpResponse("Already filled out", status=status.HTTP_400_BAD_REQUEST)
+            response_data = {}
+            response_data['detail'] = "Already filled out"
+            return HttpResponse(json.dumps(response_data), \
+                status=status.HTTP_400_BAD_REQUEST)
 check_valid_sign_up = CheckValidSignUp.as_view()
