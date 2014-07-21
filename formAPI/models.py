@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.db import models
 from formAPI import choices
-import base64
 import datetime
 import hashlib
 import json
@@ -161,8 +160,7 @@ class FormAPI(models.Model):
                 to=[self.email]
             )
             email.template_name = "confirmation email"
-            link = "http://127.0.0.1:9000/#/" + \
-                base64.urlsafe_b64encode(self.hashInit) 
+            link = "http://127.0.0.1:9000/#/" + self.hashInit
             email.global_merge_vars = {'URL': link}
             email.use_template_subject = True
             email.use_template_from = True
