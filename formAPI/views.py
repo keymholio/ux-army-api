@@ -137,6 +137,7 @@ class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (detail_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
+    paginate_by = 2
 
 
 class UserList(generics.ListCreateAPIView):
