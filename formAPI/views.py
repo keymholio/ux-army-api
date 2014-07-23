@@ -125,6 +125,7 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
+    # paginate_by = 2
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
@@ -143,6 +144,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
+    #paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -173,7 +175,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
                 Token.objects.get_or_create(user=serializer.object['user'])
             utc_now = datetime.datetime.utcnow().replace(tzinfo=utc)
             if not created and \
-            token.created < utc_now - datetime.timedelta(minutes=5):
+            token.created < utc_now - datetime.timedelta(hours=24):
                 token.delete()
                 token = Token.objects.create(user=serializer.object['user'])
                 token.created = datetime.datetime.utcnow().replace(tzinfo=utc)
