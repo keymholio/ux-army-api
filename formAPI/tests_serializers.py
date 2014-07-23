@@ -79,4 +79,3 @@ class FormAPI_Serializer_Put_tests(TestCase):
 		self.assertEquals(response.job, 'Internet Director')
 		self.assertEquals(response.income, '$100,000 or more')
 		self.assertEquals(response.employment, 'Employed at home')
-		self.assertEquals(response.email, 'elizabeth@someemail.com')
