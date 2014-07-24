@@ -125,7 +125,7 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
-    paginate_by = 2
+    # paginate_by = 2
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
@@ -144,7 +144,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    paginate_by = None
+    # paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
