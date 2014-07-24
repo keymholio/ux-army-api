@@ -49,7 +49,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'id', 'created',
             'name', 'email', 'phone', 'gender', 'job', 'birthYear', 'state',
             'income', 'experience', 'hoursOnline', 'educationLevel',
-            'employment', 'participateTime',
+            'employment', 'participateTime',  'completed_initial'
         )
 
 
