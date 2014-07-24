@@ -115,8 +115,8 @@ MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
     }
 }
 REST_FRAMEWORK = {
-    #Remove comment for pagination
-    #'PAGINATE_BY': 3,
+    #Comment to remove pagination
+    # 'PAGINATE_BY': 3,
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'

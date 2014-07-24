@@ -144,7 +144,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    #paginate_by = None
+    # paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer

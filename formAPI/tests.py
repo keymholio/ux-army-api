@@ -144,3 +144,12 @@
 #                 }
 #             )
 #         self.assertIsNotNone(json.loads(response.content)['token'])
+
+#     def test_login_token(self):
+#         response = self.client.post('/login/', 
+#                 {
+#                     'username' : 'test_user',
+#                     'password' : 'test_pw'
+#                 }
+#             )
+#         self.assertIsNotNone(json.loads(response.content)['token'])
