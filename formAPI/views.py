@@ -14,6 +14,7 @@ from formAPI.models import FormAPI
 from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put, UserSerializer
 import datetime
 import json
+import django_filters
 
 #Overloads
 class overload_detail(object):
@@ -129,6 +130,9 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
+    filter_fields = ('state', 'completed_initial', 'job', \
+        'employment', 'income', 'experience', 'hoursOnline', \
+        'educationLevel', 'participateTime')
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):

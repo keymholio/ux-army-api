@@ -156,6 +156,9 @@ class FormAPI(models.Model):
             hasher = hashlib.sha512()
             hasher.update(self.createHASH())
             self.hashInit = hasher.hexdigest()
+            formapi = FormAPI.objects.get(pk = self.id)
+            formapi.hashInit = self.hashInit
+            formapi.save()
             email = EmailMessage(
                 to=[self.email]
             )
@@ -165,9 +168,6 @@ class FormAPI(models.Model):
             email.use_template_subject = True
             email.use_template_from = True
             email.send()
-            formapi = FormAPI.objects.get(pk = self.id)
-            formapi.hashInit = self.hashInit
-            formapi.save()
 
     class Meta:
         ordering = ('created',)
