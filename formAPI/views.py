@@ -4,7 +4,7 @@ Main views class for the UX LABS API
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.timezone import utc
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -130,9 +130,11 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
     filter_fields = ('state', 'completed_initial', 'job', \
         'employment', 'income', 'experience', 'hoursOnline', \
         'educationLevel', 'participateTime')
+    ordering_fields = 'name', 'email', 'created', 'id', 'state'
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):

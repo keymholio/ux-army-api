@@ -93,18 +93,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-# REST_FRAMEWORK = {
-#     'PAGINATE_BY': 3
-# }
-
-"""EMAIL_HOST = 'localhost'
-DEFAULT_FROM_EMAIL = 'DX.LAB@gmail.com'
-EMAIL_PORT = 25"""
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
-# EMAIL_HOST_PASSWORD = 'uxlabnerd1'
 DEFAULT_FROM_EMAIL = "uxlab.nerd.1@gmail.com"
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
@@ -114,9 +102,10 @@ MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
 REST_FRAMEWORK = {
     #Comment to remove pagination
-    # 'PAGINATE_BY': 25,
+    'PAGINATE_BY': 25,
 
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 
