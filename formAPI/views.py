@@ -25,14 +25,18 @@ class overload_detail(object):
         """
         Overloading put request
         """
-        if request.user.is_authenticated():
-            print 'AUTH'
-        formAPI = FormAPI.objects.get(pk = pk)
-        serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            formAPI = FormAPI.objects.get(pk = pk)
+            if request.user.is_authenticated() or not formAPI.completed_initial:
+                serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            error_return = {"detail": str(error)}
+            return Response(error_return, \
+                status=status.HTTP_400_BAD_REQUEST)
 
 class overload_list(object):
     """
