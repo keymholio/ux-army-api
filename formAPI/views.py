@@ -13,8 +13,8 @@ from formAPI import choices
 from formAPI.models import FormAPI
 from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put, UserSerializer
 import datetime
-import json
 import django_filters
+import json
 
 #Overloads
 class overload_detail(object):
@@ -25,6 +25,8 @@ class overload_detail(object):
         """
         Overloading put request
         """
+        if request.user.is_authenticated():
+            print 'AUTH'
         formAPI = FormAPI.objects.get(pk = pk)
         serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
         if serializer.is_valid():
@@ -92,7 +94,9 @@ class detail_permissions(permissions.BasePermission):
         if request.user.is_authenticated():
             return True
         if request.method == 'PUT':
-            return True
+            r_participant = FormAPI.objects.get(email = request.DATA['email'])
+            if not r_participant.completed_initial:
+                return True
         return False
 
 class user_permissions(permissions.BasePermission):
@@ -126,7 +130,6 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
-    # paginate_by = 2
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
@@ -150,7 +153,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    # paginate_by = None
+    paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
