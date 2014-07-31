@@ -4,17 +4,20 @@ Main views class for the UX LABS API
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.timezone import utc
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
 from formAPI.models import FormAPI
-from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put, UserSerializer
+from formAPI.serializers import \
+    FormAPI_Serializer, \
+    FormAPI_Serializer_Put, UserSerializer, \
+    FormAPI_Serializer_Put_Validated
 import datetime
-import json
 import django_filters
+import json
 
 #Overloads
 class overload_detail(object):
@@ -25,12 +28,24 @@ class overload_detail(object):
         """
         Overloading put request
         """
-        formAPI = FormAPI.objects.get(pk = pk)
-        serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            formAPI = FormAPI.objects.get(pk = pk)
+            if request.user.is_authenticated():
+                serializer = FormAPI_Serializer_Put_Validated(formAPI, data=request.DATA)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not formAPI.completed_initial:
+                serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            error_return = {"detail": str(error)}
+            return Response(error_return, \
+                status=status.HTTP_400_BAD_REQUEST)
 
 class overload_list(object):
     """
@@ -92,7 +107,9 @@ class detail_permissions(permissions.BasePermission):
         if request.user.is_authenticated():
             return True
         if request.method == 'PUT':
-            return True
+            r_participant = FormAPI.objects.get(email = request.DATA['email'])
+            if not r_participant.completed_initial:
+                return True
         return False
 
 class user_permissions(permissions.BasePermission):
@@ -126,13 +143,14 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
-    # paginate_by = 2
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
     filter_fields = ('state', 'completed_initial', 'job', \
         'employment', 'income', 'experience', 'hoursOnline', \
         'educationLevel', 'participateTime')
+    ordering_fields = 'name', 'email', 'created', 'id', 'state'
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):

@@ -135,3 +135,123 @@ class FormAPI_Serializer_Put(serializers.Serializer):
                 attrs.get('completed_initial', instance.completed_initial)
             return instance
         return FormAPI(**attrs)
+
+
+class FormAPI_Serializer_Put_Validated(serializers.Serializer):
+    """
+    Used as put serializer, with validation to require information
+    """
+    id = serializers.Field()
+    name = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    phone = serializers.CharField(
+        max_length=10,
+        validators=[
+            RegexValidator(
+                regex='^[0-9]*$',
+                message='Phone number must be numeric',
+                code='Invalid phone'
+            ),
+        ],
+        required=False
+    )
+    gender = serializers.ChoiceField(
+        choices=choices.GENDER_CHOICES,
+        required=False
+    )
+    job = serializers.ChoiceField(
+        choices=choices.JOB_CHOICES,
+        required=False
+    )
+    birthYear = serializers.IntegerField(
+        validators=[validate_year],
+        required=False
+    )
+    state = serializers.ChoiceField(
+        choices=choices.STATE_CHOICES,
+        required=False
+    )
+    income = serializers.ChoiceField(
+        choices=choices.INCOME_CHOICES,
+        required=False
+    )
+    experience = serializers.ChoiceField(
+        choices=choices.EXPERIENCE_CHOICES,
+        required=False
+    )
+    hoursOnline = serializers.ChoiceField(
+        choices=choices.HOURS_ONLINE_CHOICES,
+        required=False
+    )
+    educationLevel = serializers.ChoiceField(
+        choices=choices.EDUCATION_LEVEL_CHOICES,
+        required=False
+    )
+    employment = serializers.ChoiceField(
+        choices=choices.EMPLOYMENT_CHOICES,
+        required=False
+    )
+    participateTime = serializers.ChoiceField(
+        choices=choices.PARTICIPATE_TIME_CHOICES,
+        required=False
+    )
+    completed_initial = serializers.BooleanField(
+        default=False
+    )
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Will be used to update the model when auth
+        Allows to update only a few or all fields
+        Name and email can be updated
+        """
+        attrs['completed_initial'] = False
+        if ((instance.name != "" and 'name' not in attrs) or\
+        ('name' in attrs and attrs['name'] != "")) and\
+        ((instance.email != "" and 'email' not in attrs) or\
+        ('email' in attrs and attrs['email'] != "")) and\
+        ((instance.phone != "" and 'phone' not in attrs) or\
+        ('phone' in attrs and attrs['phone'] != "")) and\
+        ((instance.gender != "" and 'gender' not in attrs) or\
+        ('gender' in attrs and attrs['gender'] != "")) and\
+        ((instance.job != "" and 'job' not in attrs) or\
+        ('job' in attrs and attrs['job'] != "")) and\
+        ((instance.birthYear != None and 'birthYear' not in attrs) or\
+        ('birthYear' in attrs and attrs['birthYear'] != None)) and\
+        ((instance.state != "" and 'state' not in attrs) or\
+        ('state' in attrs and attrs['state'] != "")) and\
+        ((instance.income != "" and 'income' not in attrs) or\
+        ('income' in attrs and attrs['income'] != "")) and\
+        ((instance.experience != "" and 'experience' not in attrs) or\
+        ('experience' in attrs and attrs['experience'] != "")) and\
+        ((instance.hoursOnline != "" and 'hoursOnline' not in attrs) or\
+        ('hoursOnline' in attrs and attrs['hoursOnline'] != ""))and\
+        ((instance.educationLevel != "" and 'educationLevel' not in attrs) or\
+        ('educationLevel' in attrs and attrs['educationLevel'] != "")) and\
+        ((instance.employment != "" and 'employment' not in attrs) or\
+        ('employment' in attrs and attrs['employment'] != ""))and\
+        ((instance.participateTime != "" and 'participateTime' not in attrs) or\
+        ('participateTime' in attrs and attrs['participateTime'] != "")):
+            attrs['completed_initial'] = True
+        if instance:
+            instance.name = attrs.get('name', instance.name)
+            instance.email = attrs.get('email', instance.email)
+            instance.phone = attrs.get('phone', instance.phone)
+            instance.gender = attrs.get('gender', instance.gender)
+            instance.job = attrs.get('job', instance.job)
+            instance.birthYear = attrs.get('birthYear', instance.birthYear)
+            instance.state = attrs.get('state', instance.state)
+            instance.income = attrs.get('income', instance.income)
+            instance.experience = attrs.get('experience', instance.experience)
+            instance.hoursOnline = \
+                attrs.get('hoursOnline', instance.hoursOnline)
+            instance.educationLevel = \
+                attrs.get('educationLevel', instance.educationLevel)
+            instance.employment = \
+                attrs.get('employment', instance.employment)
+            instance.participateTime = \
+                attrs.get('participateTime', instance.participateTime)
+            instance.completed_initial = \
+                attrs.get('completed_initial', instance.completed_initial)
+            return instance
+        return FormAPI(**attrs)
