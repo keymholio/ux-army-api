@@ -10,7 +10,6 @@ GENDER_CHOICES = [
 ]
 
 JOB_CHOICES = [
-    ('', ''),
     ('BDC Manager', 'BDC Manager'), 
     ('Controller', 'Controller'),
     ('Dealertrack Employee', 'Dealertrack Employee'),
@@ -33,7 +32,6 @@ JOB_CHOICES = [
 ]
 
 STATE_CHOICES = [
-    ('', ''),
     ('AL', 'AL'), ('AK', 'AK'), ('AZ', 'AZ'), ('AR', 'AR'), ('CA', 'CA'), 
     ('CO', 'CO'), ('CT', 'CT'), ('DE', 'DE'), ('FL', 'FL'), ('GA', 'GA'),
     ('HI', 'HI'), ('ID', 'ID'), ('IL', 'IL'), ('IN', 'IN'), ('IA', 'IA'),
@@ -47,35 +45,30 @@ STATE_CHOICES = [
 ]
 
 INCOME_CHOICES = [
-    ('', ''),
     ('Less than $40,000', 'Less than $40,000'),
     ('$40,000 to $100,000', '$40,000 to $100,000'),
     ('$100,000 or more', '$100,000 or more')
 ]
 
 EXPERIENCE_CHOICES = [
-    ('', ''),
     ('Beginner', 'Beginner'),
     ('Intermediate', 'Intermediate'),
     ('Expert', 'Expert'),
 ]
 
 HOURS_ONLINE_CHOICES = [
-    ('', ''),
     ('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), 
     ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), 
     ('10+', '10+'), 
 ]
 
 EDUCATION_LEVEL_CHOICES = [
-    ('', ''),
     ('High School', 'High School'),
     ('College', 'College'),
     ('Graduate School', 'Graduate School'),
 ]
 
 EMPLOYMENT_CHOICES = [
-    ('', ''),
     ('Employed at home', 'Employed at home'),
     ('Employed in an office', 'Employed in an office'),
     ('Employed outside an office', 'Employed outside an office'),
@@ -84,7 +77,6 @@ EMPLOYMENT_CHOICES = [
 ]
 
 PARTICIPATE_TIME_CHOICES = [
-    ('', ''),
     ('Mornings', 'Mornings'),
     ('Afternoons', 'Afternoons'),
     ('Night time', 'Night time'),
