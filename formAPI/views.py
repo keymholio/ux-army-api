@@ -11,7 +11,10 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
 from formAPI.models import FormAPI
-from formAPI.serializers import FormAPI_Serializer, FormAPI_Serializer_Put, UserSerializer
+from formAPI.serializers import \
+    FormAPI_Serializer, \
+    FormAPI_Serializer_Put, UserSerializer, \
+    FormAPI_Serializer_Put_Validated
 import datetime
 import django_filters
 import json
@@ -27,7 +30,13 @@ class overload_detail(object):
         """
         try:
             formAPI = FormAPI.objects.get(pk = pk)
-            if request.user.is_authenticated() or not formAPI.completed_initial:
+            if request.user.is_authenticated():
+                serializer = FormAPI_Serializer_Put_Validated(formAPI, data=request.DATA)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not formAPI.completed_initial:
                 serializer = FormAPI_Serializer_Put(formAPI, data=request.DATA)
                 if serializer.is_valid():
                     serializer.save()
@@ -157,7 +166,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    paginate_by = None
+    # paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
