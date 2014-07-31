@@ -1,5 +1,6 @@
 """
 File used to specify various choices
+Used for /choices/ endpoint
 """
 import datetime
 
