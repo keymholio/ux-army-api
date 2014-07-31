@@ -127,7 +127,6 @@ def get_choices():
             response[var_choices[count]].append(option[0])
         count += 1
     now = datetime.datetime.now()
-    response['birthYearChoices'].append('')
     for years_to_subtract in range(YEAR_RANGE):
         response['birthYearChoices'].append(now.year - years_to_subtract)
     return response
