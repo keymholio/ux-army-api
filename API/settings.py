@@ -105,7 +105,7 @@ MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
 
 REST_FRAMEWORK = {
     #Comment to remove pagination
-    # 'PAGINATE_BY': 25,
+    'PAGINATE_BY': 25,
 
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 

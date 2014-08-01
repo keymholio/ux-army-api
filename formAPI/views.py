@@ -125,18 +125,6 @@ class user_permissions(permissions.BasePermission):
             return True
         return False
 
-class choice_permissions(permissions.BasePermission):
-    """
-    Allows user to do a get regardless of authenticated or not
-    """
-    def has_permission(self, request, view):
-        """
-        Checks to see whether or not to give permission
-        """
-        if request.method == 'GET':
-            return True
-        return False
-
 
 #Views
 class FormAPIList(overload_list, generics.ListCreateAPIView):
@@ -166,7 +154,7 @@ class UserList(generics.ListCreateAPIView):
     """
     User list view
     """
-    # paginate_by = None
+    paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -213,16 +201,15 @@ obtain_expiring_auth_token = ObtainExpiringAuthToken.as_view()
 class ObtainChoices(choices_overload, generics.RetrieveAPIView):
     """
     Obtains choices from backend
-    Does not allow anything other than GET
     """
-    #permission_classes = (choice_permissions, )
     permission_classes = (permissions.AllowAny,)
 obtain_choices = ObtainChoices.as_view()
 
-# Leaving this here for future use
+
 class Logout(generics.CreateAPIView):
     """
-    Logout
+    Logout endpoint
+    Uses post to send logout and delete token from backend
     """
     def post(self, request):
         """
