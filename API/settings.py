@@ -41,6 +41,8 @@ INSTALLED_APPS = (
     'formAPI',
     'rest_framework.authtoken',
     'gunicorn',
+    'corsheaders',
+    "djrill",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,6 +52,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'API.urls'
@@ -63,10 +66,10 @@ WSGI_APPLICATION = 'API.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['UX_DB_NAME'],
-	    'USER': os.environ['UX_DB_USER'],
-        'PASSWORD': os.environ['UX_DB_PASSWORD'],
-        'HOST': os.environ['UX_DB_HOST'],
+        'NAME': os.environ["UX_DB_NAME"],
+        'USER': os.environ["UX_DB_USER"],
+        'PASSWORD': os.environ["UX_DB_PASSWORD"],
+        'HOST': os.environ["UX_DB_HOST"],
         'PORT': '5432',
     }
 }
@@ -91,35 +94,35 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-# REST_FRAMEWORK = {
-#     'PAGINATE_BY': 10
-# }
-
-EMAIL_HOST = 'localhost'
-DEFAULT_FROM_EMAIL = 'DX.LAB@gmail.com'
-EMAIL_PORT = 25
-"""EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'uxlab.nerd.1@gmail.com'
-EMAIL_HOST_PASSWORD = 'uxlabnerd1'"""
+DEFAULT_FROM_EMAIL = "uxlab.nerd.1@gmail.com"
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+MANDRILL_API_KEY = "swhhK5l8hMDLIhjlveU0Pg"
 
 {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
 REST_FRAMEWORK = {
+    #Comment to remove pagination
+    # 'PAGINATE_BY': 25,
+
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '10/minute',
-        'user': '100/minute'
+        'anon': '1000/minute',
+        'user': '10000/minute'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework.authentication.SessionAuthentication',
+        #leaving this in for now so we can use the API
+        'rest_framework.authentication.SessionAuthentication',
         'formAPI.tokenAuth.ExpiringTokenAuth',
     )
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
