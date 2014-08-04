@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'formAPI',
     'rest_framework.authtoken',
+    'gunicorn',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,10 +63,10 @@ WSGI_APPLICATION = 'API.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["UX_DB_NAME"],
-	    'USER': os.environ["UX_DB_USER"],
-        'PASSWORD': os.environ["UX_DB_PASSWORD"],
-        'HOST': os.environ["UX_DB_HOST"],
+        'NAME': os.environ['UX_DB_NAME'],
+	    'USER': os.environ['UX_DB_USER'],
+        'PASSWORD': os.environ['UX_DB_PASSWORD'],
+        'HOST': os.environ['UX_DB_HOST'],
         'PORT': '5432',
     }
 }
