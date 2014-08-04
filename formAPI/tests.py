@@ -374,3 +374,69 @@ class ParticipantListTest(APITestCase):
             json.loads(response.content)['detail'],
             'Invalid token'
         )
+
+    def test_validating_filters(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user, token=None)
+        self.client.post('/api/', 
+                {
+                    "name" : "emily",
+                    "email" : "emily@email.com",
+                    'educationLevel' : 'High School', 
+                    'hoursOnline': '5', 
+                    'birthYear': 1995, 
+                    'participateTime': 'Afternoons', 
+                    'gender': 'Female', 
+                    'state': 'CA', 
+                    'experience': 'Beginner', 
+                    'phone': '1234567890', 
+                    'job': 'Controller', 
+                    'income': '$100,000 or more', 
+                    'employment': 'Employed at home'
+                }
+            )
+
+        self.client.post('/api/', 
+                {
+                    "name" : "john",
+                    "email" : "john@email.com",
+                    'educationLevel' : 'Graduate School', 
+                    'hoursOnline': '9', 
+                    'birthYear': 1982, 
+                    'participateTime': 'Mornings', 
+                    'gender': 'Female', 
+                    'state': 'NY', 
+                    'experience': 'Expert', 
+                    'phone': '1234567890', 
+                    'job': 'Controller', 
+                    'income': 'Less than $40,000', 
+                    'employment': 'Unemployed'
+                }
+            )
+
+        self.client.post('/api/', 
+                {
+                    "name" : "john",
+                    "email" : "john1@email.com",
+                    'educationLevel' : 'Graduate School', 
+                    'hoursOnline': '9', 
+                    'birthYear': 1982, 
+                    'participateTime': 'Mornings', 
+                    'gender': 'Female', 
+                    'state': 'CA', 
+                    'experience': 'Expert', 
+                    'phone': '1234567890', 
+                    'job': 'Controller', 
+                    'income': 'Less than $40,000', 
+                    'employment': 'Unemployed'
+                }
+            )
+        response_state = json.loads(self.client.get('/api/?state=NY').content)
+        self.assertEqual(response_state['count'], 2)
+        response_state = json.loads(
+            self.client.get(
+                '/api/?state=NY&educationLevel=Graduate+School').content)
+        self.assertEqual(response_state['count'], 1)
+        response_state = json.loads(self.client.get(
+            '/api/?experience=Expert').content)
+        self.assertEqual(response_state['count'], 2)
