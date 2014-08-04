@@ -1,12 +1,11 @@
-# from django.test import TestCase
-# import views
-# from mock import MagicMock
-from rest_framework.test import APIClient
-from rest_framework import status
-from rest_framework.test import APITestCase
+"""
+Test file for API
+"""
 from django.contrib.auth.models import User
-import json
 from formAPI.models import FormAPI
+from rest_framework.test import APIClient, APITestCase
+from rest_framework import exceptions, status
+import json
 
 class AccountTests(APITestCase):
     def test_choices(self):
@@ -126,8 +125,27 @@ class ParticipantListTest(APITestCase):
             )
         self.assertIsNotNone(json.loads(response.content)['token'])
 
+    def test_login_and_logout(self):
+        response = self.client.post('/login/', 
+                {
+                    'username' : 'test_user',
+                    'password' : 'test_pw'
+                }
+            )
+        self.assertIsNotNone(json.loads(response.content)['token'])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        token = json.loads(response.content)['token']
+        user = User.objects.filter(auth_token=token)
+        self.assertTrue(user.count() == 1)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+        response_logout = self.client.post('/logout/')
+        user = User.objects.filter(auth_token=token)
+        self.client.credentials()
+        self.assertTrue(user.count() == 0)
+        self.assertEqual(response_logout.status_code, status.HTTP_200_OK)
+
     def test_put_on_empty(self):
-        response = self.client.put('/api/10/', 
+        response = self.client.put('/api/12/', 
             {
                 "name" : "mark",
                 "email" : "mark@email.com",
@@ -159,7 +177,7 @@ class ParticipantListTest(APITestCase):
 
     def test_put_on_not_empty(self):
         self.client.force_authenticate(user=None, token=None)
-        response = self.client.put('/api/12/', 
+        response = self.client.put('/api/14/', 
             {
                 "name" : "mark",
                 "email" : "mark@email.com",
@@ -177,7 +195,7 @@ class ParticipantListTest(APITestCase):
             }
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.put('/api/12/', 
+        response = self.client.put('/api/14/', 
             {
                 "name" : "mark",
                 "email" : "mark@email.com",
@@ -199,7 +217,7 @@ class ParticipantListTest(APITestCase):
     def test_put_on_not_empty_auth(self):
         user = User.objects.get(username='test_user')
         self.client.force_authenticate(user=user, token=None)
-        response = self.client.put('/api/14/', 
+        response = self.client.put('/api/16/', 
             {
                 "name" : "mark",
                 "email" : "mark@email.com",
@@ -216,7 +234,7 @@ class ParticipantListTest(APITestCase):
             }
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.put('/api/14/', 
+        response = self.client.put('/api/16/', 
             {
                 'birthYear': 1950, 
                 'gender': 'Female', 
@@ -237,6 +255,17 @@ class ParticipantListTest(APITestCase):
         self.assertEqual((json.loads(response.content))['employment'], 'Unemployed')
         self.assertEqual((json.loads(response.content))['birthYear'],  1950)
         self.assertEqual((json.loads(response.content))['completed_initial'], True)
+
+    def test_validate_delete(self):
+        user = User.objects.get(username='test_user')
+        self.client.force_authenticate(user=user, token=None)
+        response = self.client.get('/api/')
+        original_count = json.loads(response.content)['count']
+        delete_response = self.client.delete('/api/17/')
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.get('/api/')
+        count_after_delete = json.loads(response.content)['count']
+        self.assertEqual(count_after_delete, (original_count - 1))
 
     def test_validate_forced_auth_participant_list(self):
         user = User.objects.get(username='test_user')
@@ -269,13 +298,13 @@ class ParticipantListTest(APITestCase):
 
     def test_validate_forced_auth_participant_specific_no_auth(self):
         self.client.force_authenticate(user=None, token=None)
-        response = self.client.get('/api/9/')
+        response = self.client.get('/api/11/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_validate_forced_auth_participant_specific_with_auth(self):
         user = User.objects.get(username='test_user')
         self.client.force_authenticate(user=user, token=None)
-        response = self.client.get('/api/19/')
+        response = self.client.get('/api/23/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual((json.loads(response.content))['name'], 'victor')
         self.assertEqual((json.loads(response.content))['email'], 'victor@email.com')
@@ -337,35 +366,11 @@ class ParticipantListTest(APITestCase):
         response = self.client.get('/users/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-
-# class CheckValidTest(APITestCase):
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.client.post('/api/', 
-#                 {
-#                     "name" : "john",
-#                     "email" : "john@email.com",
-#                     'educationLevel' : 'College', 
-#                     'hoursOnline': '5', 
-#                     'birthYear': 1955, 
-#                     'participateTime': 'Afternoons', 
-#                     'gender': 'Male', 
-#                     'state': 'MD', 
-#                     'experience': 'Expert', 
-#                     'phone': '3335554444', 
-#                     'job': 'Controller', 
-#                     'income': '$100,000 or more', 
-#                     'employment': 'Employed at home'
-#                 }
-#             )
-#         self.client.post('/api/', 
-#                 {
-#                     "name" : "smith",
-#                     "email" : "smith@email.com",
-#                 }
-#             )
-#         self.user = User.objects.create_user(
-#             username='test_user', email='test_email', password='test_pw')
-
-
-#         # self.client.post('/demo-form-check/')
+    def test_validate_unauthorized_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token BADTOKEN')
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            json.loads(response.content)['detail'],
+            'Invalid token'
+        )
