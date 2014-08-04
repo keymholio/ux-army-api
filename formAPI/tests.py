@@ -4,7 +4,7 @@ Test file for API
 from django.contrib.auth.models import User
 from formAPI.models import FormAPI
 from rest_framework.test import APIClient, APITestCase
-from rest_framework import exceptions, status
+from rest_framework import status
 import json
 
 class AccountTests(APITestCase):
