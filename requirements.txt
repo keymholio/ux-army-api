@@ -8,10 +8,6 @@ djrill==1.1.1
 mock==1.0.1
 nose==1.3.3
 psycopg2==2.5.3
-<<<<<<< HEAD
 wsgiref==0.1.2
 gunicorn
-=======
 requests==2.3.0
-wsgiref==0.1.2
->>>>>>> 66f86763817999e0975c667b214fe096b170ab8d
