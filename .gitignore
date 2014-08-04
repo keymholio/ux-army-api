@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 API/database.py
-*.pyc
-=======
 *.pyc
 *.coverage
 .idea/
->>>>>>> 66f86763817999e0975c667b214fe096b170ab8d
