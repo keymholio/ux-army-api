@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'formAPI',
     'rest_framework.authtoken',
+    'gunicorn',
     'corsheaders',
     "djrill",
 )
