@@ -137,7 +137,7 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
     filter_fields = ('state', 'completed_initial', 'job', \
         'employment', 'income', 'experience', 'hoursOnline', \
-        'educationLevel', 'participateTime')
+        'educationLevel', 'participateTime', 'gender',)
     ordering_fields = 'name', 'email', 'created', 'id', 'state'
 
 
