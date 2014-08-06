@@ -56,6 +56,17 @@ class overload_list(object):
         """
         Overloading post request
         """
+        print "Test"
+        print request.DATA['email']
+        count_used = FormAPI.objects.filter(email=request.DATA['email']).count
+        print count_used
+        if count_used > 0:
+            response = {
+                'error': 'email',
+                'detail': 'Email has already been registered'
+            }
+            return HttpResponse(json.dumps(response),
+                status=status.HTTP_403_FORBIDDEN)
         return self.create(request, *args, **kwargs)
     def get(self, request, *args, **kwargs):
         """
@@ -108,7 +119,7 @@ class detail_permissions(permissions.BasePermission):
         if request.user.is_authenticated():
             return True
         if request.method == 'PUT':
-            r_participant = FormAPI.objects.get(email = request.DATA['email'])
+            r_participant = FormAPI.objects.get(email=request.DATA['email'])
             if not r_participant.completed_initial:
                 return True
         return False
