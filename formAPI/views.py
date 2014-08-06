@@ -11,6 +11,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
 from formAPI.models import FormAPI
+from formAPI.pagination import CustomPaginationSerializer
 from formAPI.serializers import \
     FormAPI_Serializer, \
     FormAPI_Serializer_Put, UserSerializer, \
@@ -131,6 +132,7 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     """
     Class for listing out all participants
     """
+    pagination_serializer_class = CustomPaginationSerializer
     permission_classes = (list_permissions, )
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
