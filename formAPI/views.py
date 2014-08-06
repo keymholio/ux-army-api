@@ -196,7 +196,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
             return HttpResponse(json.dumps(response_data), \
                 content_type="application/json")
         return HttpResponse(json.dumps(serializer.errors), \
-            status=status.HTTP_400_BAD_REQUEST)
+            status=status.HTTP_403_FORBIDDEN)
 obtain_expiring_auth_token = ObtainExpiringAuthToken.as_view()
 
 
