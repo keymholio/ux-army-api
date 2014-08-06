@@ -3,7 +3,6 @@ File used override pagination
 """
 from rest_framework import pagination
 from rest_framework import serializers
-from django.core.paginator import Paginator
 
 class CurrentPageField(serializers.Field):
     """
