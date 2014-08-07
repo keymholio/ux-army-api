@@ -56,10 +56,8 @@ class overload_list(object):
         """
         Overloading post request
         """
-        print "Test"
-        print request.DATA['email']
-        count_used = FormAPI.objects.filter(email=request.DATA['email']).count
-        print count_used
+        count_query = FormAPI.objects.filter(email=request.DATA['email'])
+        count_used = count_query.count()
         if count_used > 0:
             response = {
                 'error': 'email',
