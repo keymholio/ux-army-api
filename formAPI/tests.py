@@ -114,7 +114,7 @@ class ParticipantListTest(APITestCase):
                     'password' : 'incorrect_pass'
                 }
             )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_login_token(self):
         response = self.client.post('/login/', 
