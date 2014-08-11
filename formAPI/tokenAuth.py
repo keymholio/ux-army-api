@@ -6,6 +6,7 @@ from django.utils.timezone import utc
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 import datetime
+import overload_exceptions
 
 class ExpiringTokenAuth(TokenAuthentication):
     """
@@ -18,7 +19,7 @@ class ExpiringTokenAuth(TokenAuthentication):
         try:
             token = self.model.objects.get(key=key)
         except self.model.DoesNotExist:
-            raise exceptions.AuthenticationFailed('Invalid token')
+            raise overload_exceptions.TokenInvalid()
         if not token.user.is_active:
             raise exceptions.AuthenticationFailed('User inactive or deleted')
         utc_now = datetime.datetime.utcnow().replace(tzinfo=utc)
