@@ -19,6 +19,7 @@ from formAPI.serializers import \
 import datetime
 import django_filters
 import json
+import overload_exceptions
 
 #Overloads
 class overload_detail(object):
@@ -205,8 +206,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
             response_data = {'token': token.key}
             return HttpResponse(json.dumps(response_data), \
                 content_type="application/json")
-        return HttpResponse(json.dumps(serializer.errors), \
-            status=status.HTTP_403_FORBIDDEN)
+        raise overload_exceptions.IncorrectLogin()
 obtain_expiring_auth_token = ObtainExpiringAuthToken.as_view()
 
 
