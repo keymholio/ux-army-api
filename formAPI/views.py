@@ -147,11 +147,12 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
-    ordering = ('id',)
+    ordering = ('-completed_initial', '-created')
     filter_fields = ('state', 'completed_initial', 'job', \
         'employment', 'income', 'experience', 'hoursOnline', \
         'educationLevel', 'participateTime', 'gender',)
-    ordering_fields = 'name', 'email', 'created', 'id', 'state'
+    ordering_fields = 'name', 'email', 'created', 'id', 'state', \
+        'completed_initial'
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):
