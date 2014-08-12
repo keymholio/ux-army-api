@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from formAPI.models import FormAPI
+from formAPI.models import FormAPI, Task, Event
 from formAPI import choices
 import datetime
 
@@ -255,3 +255,31 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
                 attrs.get('completed_initial', instance.completed_initial)
             return instance
         return FormAPI(**attrs)
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    events = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Task
+        fields = ('title', 'description', 'is_active', 'events')
+
+class EventSerializer(serializers.ModelSerializer):
+    DATE_INPUT_FORMATS = [
+        '%m/%d/%Y', '%m/%d/%y', 
+        '%b %d %Y', '%b %d, %Y',
+        '%B %d %Y', '%B %d, %Y',
+        '%Y-%m-%d'
+    ]
+    date = serializers.DateField(
+        input_formats=DATE_INPUT_FORMATS
+    )
+    time = serializers.TimeField(
+        input_formats=[
+            '%I:%M %p', '%I%p',
+            '%I:%M%p', '%I %p',
+        ]
+    )
+    class Meta:
+        model = Event
+        fields = ('task', 'date', 'time', 'created')

@@ -10,12 +10,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
-from formAPI.models import FormAPI
+from formAPI.models import FormAPI, Task, Event
 from formAPI.pagination import CustomPaginationSerializer
 from formAPI.serializers import \
     FormAPI_Serializer, \
     FormAPI_Serializer_Put, UserSerializer, \
-    FormAPI_Serializer_Put_Validated
+    FormAPI_Serializer_Put_Validated, \
+    TaskSerializer, \
+    EventSerializer
 import datetime
 import django_filters
 import json
@@ -267,3 +269,34 @@ class CheckValidSignUp(generics.CreateAPIView):
             return HttpResponse(json.dumps(response_data), \
                 status=status.HTTP_400_BAD_REQUEST)
 check_valid_sign_up = CheckValidSignUp.as_view()
+
+
+class TaskList(generics.ListCreateAPIView):
+    """
+    Class for listing out all tasks
+    """
+    paginate_by = None
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Class for detail task view
+    """
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+class EventList(generics.ListCreateAPIView):
+    """
+    Class for listing out all tasks
+    """
+    paginate_by = None
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+class EventDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Class for detail task view
+    """
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer

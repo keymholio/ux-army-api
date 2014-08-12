@@ -114,7 +114,7 @@ class ParticipantListTest(APITestCase):
                     'password' : 'incorrect_pass'
                 }
             )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_login_token(self):
         response = self.client.post('/login/', 
@@ -369,10 +369,10 @@ class ParticipantListTest(APITestCase):
     def test_validate_unauthorized_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token BADTOKEN')
         response = self.client.get('/api/')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             json.loads(response.content)['detail'],
-            'Invalid token'
+            'Token is invalid, please login again'
         )
 
     def test_validating_filters(self):

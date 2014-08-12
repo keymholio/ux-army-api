@@ -171,3 +171,29 @@ class FormAPI(models.Model):
 
     class Meta:
         ordering = ('created',)
+
+
+class Task(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(
+        unique=True,
+        max_length=60,
+    )
+    description = models.TextField()
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    class Meta:
+        ordering = ('created',)
+
+
+class Event(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    task = models.ForeignKey(Task, related_name='events')
+    date = models.DateField()
+    time = models.TimeField()
+
+    class Meta:
+        ordering = ('created',)
+
