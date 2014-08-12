@@ -49,7 +49,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'id', 'created',
             'name', 'email', 'phone', 'gender', 'job', 'birthYear', 'state',
             'income', 'experience', 'hoursOnline', 'educationLevel',
-            'employment', 'participateTime',  'completed_initial'
+            'employment', 'participateTime',  'completed_initial', 'participant'
         )
 
 
@@ -258,7 +258,7 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    events = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    events = serializers.RelatedField(many=True, read_only=True)
 
     class Meta:
         model = Task
@@ -282,4 +282,4 @@ class EventSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Event
-        fields = ('task', 'date', 'time', 'created')
+        fields = ('task', 'participant', 'date', 'time', 'created')

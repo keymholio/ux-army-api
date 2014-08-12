@@ -146,6 +146,9 @@ class FormAPI(models.Model):
         editable=False
     )
 
+    def __unicode__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         """
         Override of save to make sure hash is created with ID
@@ -167,7 +170,7 @@ class FormAPI(models.Model):
             email.global_merge_vars = {'URL': link}
             email.use_template_subject = True
             email.use_template_from = True
-            email.send()
+            #email.send()
 
     class Meta:
         ordering = ('created',)
@@ -187,13 +190,20 @@ class Task(models.Model):
     class Meta:
         ordering = ('created',)
 
+    def __unicode__(self):
+        return self.title
+
 
 class Event(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     task = models.ForeignKey(Task, related_name='events')
+    participant = models.ForeignKey(FormAPI, related_name='participant')
     date = models.DateField()
     time = models.TimeField()
 
     class Meta:
         ordering = ('created',)
+
+    def __unicode__(self):
+        return self.time
 
