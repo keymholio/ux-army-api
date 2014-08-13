@@ -176,7 +176,7 @@ class FormAPI(models.Model):
         ordering = ('created',)
 
 
-class Task(models.Model):
+class Test(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(
         unique=True,
@@ -194,12 +194,34 @@ class Task(models.Model):
         return self.title
 
 
-class Event(models.Model):
+class Appointment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    task = models.ForeignKey(Task, related_name='events')
+    test = models.ForeignKey(Test, related_name='appointments')
     participant = models.ForeignKey(FormAPI, related_name='participant')
     date = models.DateField()
     time = models.TimeField()
+    # def save(self, *args, **kwargs):
+    #     """
+    #     Override of save to make sure hash is created with ID
+    #     Sends email once this is done
+    #     """
+    #     super(FormAPI, self).save(*args, **kwargs)
+    #     if self.hashInit == '':
+    #         hasher = hashlib.sha512()
+    #         hasher.update(self.createHASH())
+    #         self.hashInit = hasher.hexdigest()
+    #         formapi = FormAPI.objects.get(pk = self.id)
+    #         formapi.hashInit = self.hashInit
+    #         formapi.save()
+    #         email = EmailMessage(
+    #             to=[self.email]
+    #         )
+    #         email.template_name = "confirmation email"
+    #         link = self.hashInit
+    #         email.global_merge_vars = {'URL': link}
+    #         email.use_template_subject = True
+    #         email.use_template_from = True
+    #         #email.send()
 
     class Meta:
         ordering = ('created',)

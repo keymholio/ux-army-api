@@ -10,14 +10,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
-from formAPI.models import FormAPI, Task, Event
+from formAPI.models import FormAPI, Test, Appointment
 from formAPI.pagination import CustomPaginationSerializer
 from formAPI.serializers import \
     FormAPI_Serializer, \
     FormAPI_Serializer_Put, UserSerializer, \
     FormAPI_Serializer_Put_Validated, \
-    TaskSerializer, \
-    EventSerializer
+    TestSerializer, \
+    AppointmentSerializer
 import datetime
 import django_filters
 import json
@@ -273,32 +273,36 @@ class CheckValidSignUp(generics.CreateAPIView):
 check_valid_sign_up = CheckValidSignUp.as_view()
 
 
-class TaskList(generics.ListCreateAPIView):
+class TestList(generics.ListCreateAPIView):
     """
-    Class for listing out all tasks
-    """
-    paginate_by = None
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-
-class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Class for detail task view
-    """
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-
-class EventList(generics.ListCreateAPIView):
-    """
-    Class for listing out all tasks
+    Class for listing out all tests
     """
     paginate_by = None
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+    permission_classes = (user_permissions, )
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
 
-class EventDetail(generics.RetrieveUpdateDestroyAPIView):
+class TestDetail(generics.RetrieveUpdateDestroyAPIView):
     """
-    Class for detail task view
+    Class for detail test view
     """
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+    permission_classes = (user_permissions, )
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+class AppointmentList(generics.ListCreateAPIView):
+    """
+    Class for listing out all appointments
+    """
+    paginate_by = None
+    permission_classes = (user_permissions, )
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+
+class AppointmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Class for detail appointment view
+    """
+    permission_classes = (user_permissions, )
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer

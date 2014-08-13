@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from formAPI.models import FormAPI, Task, Event
+from formAPI.models import FormAPI, Test, Appointment
 from formAPI import choices
 import datetime
 
@@ -257,14 +257,16 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
         return FormAPI(**attrs)
 
 
-class TaskSerializer(serializers.ModelSerializer):
-    events = serializers.RelatedField(many=True, read_only=True)
+class TestSerializer(serializers.ModelSerializer):
+    appointments = serializers.HyperlinkedRelatedField(many=True, read_only=True, 
+            view_name='appointment-detail')
 
     class Meta:
-        model = Task
-        fields = ('title', 'description', 'is_active', 'events')
+        model = Test
+        fields = ('id', 'title', 'description', 'is_active', 'appointments')
 
-class EventSerializer(serializers.ModelSerializer):
+class AppointmentSerializer(serializers.ModelSerializer):
+    # test = serializers.Field(source='owner.username
     DATE_INPUT_FORMATS = [
         '%m/%d/%Y', '%m/%d/%y', 
         '%b %d %Y', '%b %d, %Y',
@@ -281,5 +283,5 @@ class EventSerializer(serializers.ModelSerializer):
         ]
     )
     class Meta:
-        model = Event
-        fields = ('task', 'participant', 'date', 'time', 'created')
+        model = Appointment
+        fields = ('id', 'test', 'participant', 'date', 'time', 'created')
