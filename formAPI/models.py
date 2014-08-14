@@ -200,28 +200,28 @@ class Appointment(models.Model):
     participant = models.ForeignKey(FormAPI, related_name='participant')
     date = models.DateField()
     time = models.TimeField()
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Override of save to make sure hash is created with ID
-    #     Sends email once this is done
-    #     """
-    #     super(FormAPI, self).save(*args, **kwargs)
-    #     if self.hashInit == '':
-    #         hasher = hashlib.sha512()
-    #         hasher.update(self.createHASH())
-    #         self.hashInit = hasher.hexdigest()
-    #         formapi = FormAPI.objects.get(pk = self.id)
-    #         formapi.hashInit = self.hashInit
-    #         formapi.save()
-    #         email = EmailMessage(
-    #             to=[self.email]
-    #         )
-    #         email.template_name = "confirmation email"
-    #         link = self.hashInit
-    #         email.global_merge_vars = {'URL': link}
-    #         email.use_template_subject = True
-    #         email.use_template_from = True
-    #         #email.send()
+    def save(self, *args, **kwargs):
+        """
+        Override of save to make sure hash is created with ID
+        Sends email once this is done
+        """
+        super(Appointment, self).save(*args, **kwargs)
+        # if self.hashInit == '':
+        #     hasher = hashlib.sha512()
+        #     hasher.update(self.createHASH())
+        #     self.hashInit = hasher.hexdigest()
+        #     formapi = FormAPI.objects.get(pk = self.id)
+        #     formapi.hashInit = self.hashInit
+        #     formapi.save()
+        #     email = EmailMessage(
+        #         to=[self.email]
+        #     )
+        #     email.template_name = "confirmation email"
+        #     link = self.hashInit
+        #     email.global_merge_vars = {'URL': link}
+        #     email.use_template_subject = True
+        #     email.use_template_from = True
+        #     #email.send()
 
     class Meta:
         ordering = ('created',)

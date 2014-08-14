@@ -121,7 +121,6 @@ class detail_permissions(permissions.BasePermission):
             return True
         if request.method == 'PUT':
             r_participant = FormAPI.objects.get(email=request.DATA['email'])
-            print r_participant
             if not r_participant.completed_initial:
                 return True
         return False

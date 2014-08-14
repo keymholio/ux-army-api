@@ -256,17 +256,7 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
             return instance
         return FormAPI(**attrs)
 
-
-class TestSerializer(serializers.ModelSerializer):
-    appointments = serializers.HyperlinkedRelatedField(many=True, read_only=True, 
-            view_name='appointment-detail')
-
-    class Meta:
-        model = Test
-        fields = ('id', 'title', 'description', 'is_active', 'appointments')
-
-class AppointmentSerializer(serializers.ModelSerializer):
-    # test = serializers.Field(source='owner.username
+class AppointmentSerializerForTest(serializers.HyperlinkedModelSerializer):
     DATE_INPUT_FORMATS = [
         '%m/%d/%Y', '%m/%d/%y', 
         '%b %d %Y', '%b %d, %Y',
@@ -284,4 +274,41 @@ class AppointmentSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Appointment
-        fields = ('id', 'test', 'participant', 'date', 'time', 'created')
+        fields = ('id', 'url', 'participant', 'date', \
+            'time', 'created')
+
+class TestSerializerForAppointment(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Test
+        fields = ('id', 'url', 'title', 'description', 'is_active')
+
+class TestSerializer(serializers.HyperlinkedModelSerializer):
+    # appointments = serializers.HyperlinkedRelatedField(many=True, read_only=True, 
+    #         view_name='appointment-detail')
+    appointments = AppointmentSerializerForTest(source='appointments', read_only=True, many=True)
+
+    class Meta:
+        model = Test
+        fields = ('id', 'title', 'description', 'is_active', 'appointments')
+
+class AppointmentSerializer(serializers.HyperlinkedModelSerializer):
+    test_information = TestSerializerForAppointment(source='test', read_only=True)
+    DATE_INPUT_FORMATS = [
+        '%m/%d/%Y', '%m/%d/%y', 
+        '%b %d %Y', '%b %d, %Y',
+        '%B %d %Y', '%B %d, %Y',
+        '%Y-%m-%d'
+    ]
+    date = serializers.DateField(
+        input_formats=DATE_INPUT_FORMATS
+    )
+    time = serializers.TimeField(
+        input_formats=[
+            '%I:%M %p', '%I%p',
+            '%I:%M%p', '%I %p',
+        ]
+    )
+    class Meta:
+        model = Appointment
+        fields = ('id', 'test', 'participant', 'date', \
+            'time', 'created', 'test_information')
