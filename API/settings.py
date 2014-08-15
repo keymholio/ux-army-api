@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'api.middleware.SecureRequiredMiddleware',
+    'API.middleware.SecureRequiredMiddleware',
 )
 
 ROOT_URLCONF = 'API.urls'
