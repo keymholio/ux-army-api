@@ -1,4 +1,4 @@
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponseRedirect
 from django.conf import settings
 
 class SecureRequiredMiddleware(object):
@@ -9,5 +9,5 @@ class SecureRequiredMiddleware(object):
         if self.enabled and not request.is_secure():
             request_url = request.build_absolute_uri(request.get_full_path())
             secure_url = request_url.replace('http://', 'https://')
-            return HttpResponsePermanentRedirect(secure_url)
+            return HttpResponseRedirect(secure_url)
         return None
