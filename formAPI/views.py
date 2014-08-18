@@ -1,6 +1,7 @@
 """
 Main views class for the UX LABS API
 """
+from collections import defaultdict
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.timezone import utc
@@ -151,12 +152,36 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
+    # filter_fields = ('state', 'completed_initial', 'job', \
+    #     'employment', 'income', 'experience', 'hoursOnline', \
+    #     'educationLevel', 'participateTime', 'gender',)
     ordering = ('-completed_initial', '-created')
-    filter_fields = ('state', 'completed_initial', 'job', \
-        'employment', 'income', 'experience', 'hoursOnline', \
-        'educationLevel', 'participateTime', 'gender',)
     ordering_fields = 'name', 'email', 'created', 'id', 'state', \
         'completed_initial'
+    def get_queryset(self):
+        search_dict = dict(self.request.QUERY_PARAMS.lists())
+        queryset = FormAPI.objects.all()
+        if 'state' in search_dict:
+            queryset = queryset.filter(state__in=[str(x) for x in search_dict['state']])
+        if 'completed_initial' in search_dict:
+            queryset = queryset.filter(completed_initial__in=[str(x) for x in search_dict['completed_initial']])
+        if 'job' in search_dict:
+            queryset = queryset.filter(job__in=[str(x) for x in search_dict['job']])
+        if 'employment' in search_dict:
+            queryset = queryset.filter(employment__in=[str(x) for x in search_dict['employment']])
+        if 'income' in search_dict:
+            queryset = queryset.filter(income__in=[str(x) for x in search_dict['income']])
+        if 'experience' in search_dict:
+            queryset = queryset.filter(experience__in=[str(x) for x in search_dict['experience']])
+        if 'hoursOnline' in search_dict:
+            queryset = queryset.filter(hoursOnline__in=[str(x) for x in search_dict['hoursOnline']])
+        if 'educationLevel' in search_dict:
+            queryset = queryset.filter(educationLevel__in=[str(x) for x in search_dict['educationLevel']])
+        if 'participateTime' in search_dict:
+            queryset = queryset.filter(participateTime__in=[str(x) for x in search_dict['participateTime']])
+        if 'gender' in search_dict:
+            queryset = queryset.filter(gender__in=[str(x) for x in search_dict['gender']])
+        return queryset
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):
