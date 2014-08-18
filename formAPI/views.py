@@ -17,7 +17,7 @@ from formAPI.serializers import \
     FormAPI_Serializer_Put, UserSerializer, \
     FormAPI_Serializer_Put_Validated, \
     TestSerializer, \
-    AppointmentSerializer
+    AppointmentSerializer, UserSerializer_Superuser
 import datetime
 import django_filters
 import json
@@ -134,6 +134,8 @@ class user_permissions(permissions.BasePermission):
         Checks to see whether or not to give permission
         only allow if auth
         """
+        if request.user.is_authenticated() and request.method == 'DELETE':
+            return True
         if request.user.is_authenticated():
             return True
         return False
@@ -173,16 +175,24 @@ class UserList(generics.ListCreateAPIView):
     paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return UserSerializer_Superuser
+        else:
+            return UserSerializer
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Detailed user view
     """
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return UserSerializer_Superuser
+        else:
+            return UserSerializer
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):

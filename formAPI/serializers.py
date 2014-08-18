@@ -14,8 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Main serializer for the user model
     """
-    snippets = serializers.PrimaryKeyRelatedField(many=True)
-
     class Meta:
         """
         Serializes the user
@@ -23,9 +21,25 @@ class UserSerializer(serializers.ModelSerializer):
         """
         model = User
         fields = \
-            ('id', 'username', 'password', 'first_name', 'last_name', 'email', )
-        write_only_fields = ('password',)
+            ('id', 'username', 'first_name', 'last_name', 'email', \
+               'password', 'is_staff', 'is_active', 'is_superuser')
+        read_only_fields = ('is_superuser', 'is_active', 'is_staff', 'password')
 
+
+class UserSerializer_Superuser(serializers.ModelSerializer):
+    """
+    User Serializer for superuser
+    """
+    class Meta:
+        """
+        Serializes the user
+        Sets the password to write only
+        """
+        model = User
+        fields = \
+            ('id', 'username', 'first_name', 'last_name', 'email', \
+                'password', 'is_staff', 'is_active', 'is_superuser')
+        write_only_fields = ('password',)
     def restore_object(self, attrs, instance=None):
         """
         Used to set password and return the user
