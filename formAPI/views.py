@@ -162,25 +162,38 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
         search_dict = dict(self.request.QUERY_PARAMS.lists())
         queryset = FormAPI.objects.all()
         if 'state' in search_dict:
-            queryset = queryset.filter(state__in=[str(x) for x in search_dict['state']])
+            queryset = queryset.filter\
+                (state__in=[str(x) for x in search_dict['state']])
         if 'completed_initial' in search_dict:
-            queryset = queryset.filter(completed_initial__in=[str(x) for x in search_dict['completed_initial']])
+            queryset = queryset.filter\
+                (completed_initial__in=\
+                    [str(x) for x in search_dict['completed_initial']])
         if 'job' in search_dict:
-            queryset = queryset.filter(job__in=[str(x) for x in search_dict['job']])
+            queryset = queryset.filter\
+                (job__in=[str(x) for x in search_dict['job']])
         if 'employment' in search_dict:
-            queryset = queryset.filter(employment__in=[str(x) for x in search_dict['employment']])
+            queryset = queryset.filter\
+                (employment__in=[str(x) for x in search_dict['employment']])
         if 'income' in search_dict:
-            queryset = queryset.filter(income__in=[str(x) for x in search_dict['income']])
+            queryset = queryset.filter\
+                (income__in=[str(x) for x in search_dict['income']])
         if 'experience' in search_dict:
-            queryset = queryset.filter(experience__in=[str(x) for x in search_dict['experience']])
+            queryset = queryset.filter\
+                (experience__in=[str(x) for x in search_dict['experience']])
         if 'hoursOnline' in search_dict:
-            queryset = queryset.filter(hoursOnline__in=[str(x) for x in search_dict['hoursOnline']])
+            queryset = queryset.filter\
+                (hoursOnline__in=[str(x) for x in search_dict['hoursOnline']])
         if 'educationLevel' in search_dict:
-            queryset = queryset.filter(educationLevel__in=[str(x) for x in search_dict['educationLevel']])
+            queryset = queryset.filter\
+                (educationLevel__in=\
+                    [str(x) for x in search_dict['educationLevel']])
         if 'participateTime' in search_dict:
-            queryset = queryset.filter(participateTime__in=[str(x) for x in search_dict['participateTime']])
+            queryset = queryset.filter\
+                (participateTime__in=\
+                    [str(x) for x in search_dict['participateTime']])
         if 'gender' in search_dict:
-            queryset = queryset.filter(gender__in=[str(x) for x in search_dict['gender']])
+            queryset = queryset.filter\
+            (gender__in=[str(x) for x in search_dict['gender']])
         return queryset
 
 
