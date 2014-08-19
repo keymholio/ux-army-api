@@ -170,7 +170,7 @@ class FormAPI(models.Model):
             email.global_merge_vars = {'URL': link}
             email.use_template_subject = True
             email.use_template_from = True
-            #email.send()
+            email.send()
 
     class Meta:
         ordering = ('created',)
