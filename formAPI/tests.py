@@ -114,7 +114,7 @@ class ParticipantListTest(APITestCase):
                     'password' : 'incorrect_pass'
                 }
             )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_login_token(self):
         response = self.client.post('/login/', 
@@ -272,19 +272,19 @@ class ParticipantListTest(APITestCase):
         self.client.force_authenticate(user=user, token=None)
         response = self.client.get('/api/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual((json.loads(response.content))['results'][0]['name'], 'victor')
-        self.assertEqual((json.loads(response.content))['results'][0]['email'], 'victor@email.com')
-        self.assertEqual((json.loads(response.content))['results'][0]['educationLevel'], 'College')
-        self.assertEqual((json.loads(response.content))['results'][0]['hoursOnline'], '10')
-        self.assertEqual((json.loads(response.content))['results'][0]['birthYear'], 1990)
-        self.assertEqual((json.loads(response.content))['results'][0]['participateTime'], 'Afternoons')
-        self.assertEqual((json.loads(response.content))['results'][0]['gender'], 'Male')
-        self.assertEqual((json.loads(response.content))['results'][0]['state'], 'NY')
-        self.assertEqual((json.loads(response.content))['results'][0]['experience'], 'Intermediate')
-        self.assertEqual((json.loads(response.content))['results'][0]['phone'], '5556664444')
-        self.assertEqual((json.loads(response.content))['results'][0]['job'], 'Internet Director')
-        self.assertEqual((json.loads(response.content))['results'][0]['income'], '$100,000 or more')
-        self.assertEqual((json.loads(response.content))['results'][0]['employment'], 'Employed at home')
+        self.assertEqual((json.loads(response.content))['results'][1]['name'], 'victor')
+        self.assertEqual((json.loads(response.content))['results'][1]['email'], 'victor@email.com')
+        self.assertEqual((json.loads(response.content))['results'][1]['educationLevel'], 'College')
+        self.assertEqual((json.loads(response.content))['results'][1]['hoursOnline'], '10')
+        self.assertEqual((json.loads(response.content))['results'][1]['birthYear'], 1990)
+        self.assertEqual((json.loads(response.content))['results'][1]['participateTime'], 'Afternoons')
+        self.assertEqual((json.loads(response.content))['results'][1]['gender'], 'Male')
+        self.assertEqual((json.loads(response.content))['results'][1]['state'], 'NY')
+        self.assertEqual((json.loads(response.content))['results'][1]['experience'], 'Intermediate')
+        self.assertEqual((json.loads(response.content))['results'][1]['phone'], '5556664444')
+        self.assertEqual((json.loads(response.content))['results'][1]['job'], 'Internet Director')
+        self.assertEqual((json.loads(response.content))['results'][1]['income'], '$100,000 or more')
+        self.assertEqual((json.loads(response.content))['results'][1]['employment'], 'Employed at home')
 
     def test_validate_forced_auth_user_list(self):
         user = User.objects.get(username='test_user')
@@ -369,10 +369,10 @@ class ParticipantListTest(APITestCase):
     def test_validate_unauthorized_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token BADTOKEN')
         response = self.client.get('/api/')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             json.loads(response.content)['detail'],
-            'Invalid token'
+            'Token is invalid, please login again'
         )
 
     def test_validating_filters(self):

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from formAPI.models import FormAPI
+from formAPI.models import FormAPI, Test, Appointment
 from formAPI import choices
 import datetime
 
@@ -14,8 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Main serializer for the user model
     """
-    snippets = serializers.PrimaryKeyRelatedField(many=True)
-
     class Meta:
         """
         Serializes the user
@@ -23,9 +21,25 @@ class UserSerializer(serializers.ModelSerializer):
         """
         model = User
         fields = \
-            ('id', 'username', 'password', 'first_name', 'last_name', 'email', )
-        write_only_fields = ('password',)
+            ('id', 'username', 'first_name', 'last_name', 'email', \
+               'password', 'is_staff', 'is_active', 'is_superuser')
+        read_only_fields = ('is_superuser', 'is_active', 'is_staff', 'password')
 
+
+class UserSerializer_Superuser(serializers.ModelSerializer):
+    """
+    User Serializer for superuser
+    """
+    class Meta:
+        """
+        Serializes the user
+        Sets the password to write only
+        """
+        model = User
+        fields = \
+            ('id', 'username', 'first_name', 'last_name', 'email', \
+                'password', 'is_staff', 'is_active', 'is_superuser')
+        write_only_fields = ('password',)
     def restore_object(self, attrs, instance=None):
         """
         Used to set password and return the user
@@ -49,7 +63,7 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'id', 'created',
             'name', 'email', 'phone', 'gender', 'job', 'birthYear', 'state',
             'income', 'experience', 'hoursOnline', 'educationLevel',
-            'employment', 'participateTime',  'completed_initial'
+            'employment', 'participateTime',  'completed_initial', 'participant'
         )
 
 
@@ -255,3 +269,60 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
                 attrs.get('completed_initial', instance.completed_initial)
             return instance
         return FormAPI(**attrs)
+
+class AppointmentSerializerForTest(serializers.HyperlinkedModelSerializer):
+    DATE_INPUT_FORMATS = [
+        '%m/%d/%Y', '%m/%d/%y', 
+        '%b %d %Y', '%b %d, %Y',
+        '%B %d %Y', '%B %d, %Y',
+        '%Y-%m-%d'
+    ]
+    date = serializers.DateField(
+        input_formats=DATE_INPUT_FORMATS
+    )
+    time = serializers.TimeField(
+        input_formats=[
+            '%I:%M %p', '%I%p',
+            '%I:%M%p', '%I %p',
+        ]
+    )
+    class Meta:
+        model = Appointment
+        fields = ('id', 'url', 'participant', 'date', \
+            'time', 'created')
+
+class TestSerializerForAppointment(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Test
+        fields = ('id', 'url', 'title', 'description', 'is_active')
+
+class TestSerializer(serializers.HyperlinkedModelSerializer):
+    # appointments = serializers.HyperlinkedRelatedField(many=True, read_only=True, 
+    #         view_name='appointment-detail')
+    appointments = AppointmentSerializerForTest(source='appointments', read_only=True, many=True)
+
+    class Meta:
+        model = Test
+        fields = ('id', 'title', 'description', 'is_active', 'appointments')
+
+class AppointmentSerializer(serializers.HyperlinkedModelSerializer):
+    test_information = TestSerializerForAppointment(source='test', read_only=True)
+    DATE_INPUT_FORMATS = [
+        '%m/%d/%Y', '%m/%d/%y', 
+        '%b %d %Y', '%b %d, %Y',
+        '%B %d %Y', '%B %d, %Y',
+        '%Y-%m-%d'
+    ]
+    date = serializers.DateField(
+        input_formats=DATE_INPUT_FORMATS
+    )
+    time = serializers.TimeField(
+        input_formats=[
+            '%I:%M %p', '%I%p',
+            '%I:%M%p', '%I %p',
+        ]
+    )
+    class Meta:
+        model = Appointment
+        fields = ('id', 'test', 'participant', 'date', \
+            'time', 'created', 'test_information')

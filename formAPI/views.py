@@ -1,6 +1,7 @@
 """
 Main views class for the UX LABS API
 """
+from collections import defaultdict
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.timezone import utc
@@ -10,12 +11,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from formAPI import choices
-from formAPI.models import FormAPI
+from formAPI.models import FormAPI, Test, Appointment
 from formAPI.pagination import CustomPaginationSerializer
 from formAPI.serializers import \
     FormAPI_Serializer, \
     FormAPI_Serializer_Put, UserSerializer, \
-    FormAPI_Serializer_Put_Validated
+    FormAPI_Serializer_Put_Validated, \
+    TestSerializer, \
+    AppointmentSerializer, UserSerializer_Superuser
 import datetime
 import django_filters
 import json
@@ -132,6 +135,8 @@ class user_permissions(permissions.BasePermission):
         Checks to see whether or not to give permission
         only allow if auth
         """
+        if request.user.is_authenticated() and request.method == 'DELETE':
+            return True
         if request.user.is_authenticated():
             return True
         return False
@@ -147,12 +152,49 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
+    # filter_fields = ('state', 'completed_initial', 'job', \
+    #     'employment', 'income', 'experience', 'hoursOnline', \
+    #     'educationLevel', 'participateTime', 'gender',)
     ordering = ('-completed_initial', '-created')
-    filter_fields = ('state', 'completed_initial', 'job', \
-        'employment', 'income', 'experience', 'hoursOnline', \
-        'educationLevel', 'participateTime', 'gender',)
     ordering_fields = 'name', 'email', 'created', 'id', 'state', \
         'completed_initial'
+    def get_queryset(self):
+        search_dict = dict(self.request.QUERY_PARAMS.lists())
+        queryset = FormAPI.objects.all()
+        if 'state' in search_dict:
+            queryset = queryset.filter\
+                (state__in=[str(x) for x in search_dict['state']])
+        if 'completed_initial' in search_dict:
+            queryset = queryset.filter\
+                (completed_initial__in=\
+                    [str(x) for x in search_dict['completed_initial']])
+        if 'job' in search_dict:
+            queryset = queryset.filter\
+                (job__in=[str(x) for x in search_dict['job']])
+        if 'employment' in search_dict:
+            queryset = queryset.filter\
+                (employment__in=[str(x) for x in search_dict['employment']])
+        if 'income' in search_dict:
+            queryset = queryset.filter\
+                (income__in=[str(x) for x in search_dict['income']])
+        if 'experience' in search_dict:
+            queryset = queryset.filter\
+                (experience__in=[str(x) for x in search_dict['experience']])
+        if 'hoursOnline' in search_dict:
+            queryset = queryset.filter\
+                (hoursOnline__in=[str(x) for x in search_dict['hoursOnline']])
+        if 'educationLevel' in search_dict:
+            queryset = queryset.filter\
+                (educationLevel__in=\
+                    [str(x) for x in search_dict['educationLevel']])
+        if 'participateTime' in search_dict:
+            queryset = queryset.filter\
+                (participateTime__in=\
+                    [str(x) for x in search_dict['participateTime']])
+        if 'gender' in search_dict:
+            queryset = queryset.filter\
+            (gender__in=[str(x) for x in search_dict['gender']])
+        return queryset
 
 
 class FormAPIDetail(overload_detail, generics.RetrieveUpdateDestroyAPIView):
@@ -171,16 +213,24 @@ class UserList(generics.ListCreateAPIView):
     paginate_by = None
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return UserSerializer_Superuser
+        else:
+            return UserSerializer
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Detailed user view
     """
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return UserSerializer_Superuser
+        else:
+            return UserSerializer
     permission_classes = (user_permissions, )
     queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):
@@ -268,3 +318,38 @@ class CheckValidSignUp(generics.CreateAPIView):
             return HttpResponse(json.dumps(response_data), \
                 status=status.HTTP_400_BAD_REQUEST)
 check_valid_sign_up = CheckValidSignUp.as_view()
+
+
+class TestList(generics.ListCreateAPIView):
+    """
+    Class for listing out all tests
+    """
+    paginate_by = None
+    permission_classes = (user_permissions, )
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+class TestDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Class for detail test view
+    """
+    permission_classes = (user_permissions, )
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+class AppointmentList(generics.ListCreateAPIView):
+    """
+    Class for listing out all appointments
+    """
+    paginate_by = None
+    permission_classes = (user_permissions, )
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+
+class AppointmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Class for detail appointment view
+    """
+    permission_classes = (user_permissions, )
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
