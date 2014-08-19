@@ -40,13 +40,13 @@ class UserSerializer_Superuser(serializers.ModelSerializer):
             ('id', 'username', 'first_name', 'last_name', 'email', \
                 'password', 'is_staff', 'is_active', 'is_superuser')
         write_only_fields = ('password',)
-    def restore_object(self, attrs, instance=None):
-        """
-        Used to set password and return the user
-        """
-        user = super(UserSerializer, self).restore_object(attrs, instance)
-        user.set_password(attrs['password'])
-        return user
+    # def restore_object(self, attrs, instance=None):
+    #     """
+    #     Used to set password and return the user
+    #     """
+    #     user = super(UserSerializer, self).restore_object(attrs, instance)
+    #     user.set_password(attrs['password'])
+    #     return user
 
 
 class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
