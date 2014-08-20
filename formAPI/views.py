@@ -118,13 +118,18 @@ class detail_permissions(permissions.BasePermission):
         If user is authenticated or posting it should give permission
         Else it should return false
         """
+        print request.method
         if request.user.is_authenticated():
             return True
-        if request.method == 'PUT':
-            r_participant = FormAPI.objects.get(email=request.DATA['email'])
+        elif request.method == 'PUT':
+            print request.method
+            if request.DATA.get('email', '') == '':
+                return False
+            r_participant = FormAPI.objects.get(email=request.DATA.get('email', ''))
             if not r_participant.completed_initial:
                 return True
-        return False
+        else:
+            return False
 
 class user_permissions(permissions.BasePermission):
     """
@@ -353,3 +358,22 @@ class AppointmentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (user_permissions, )
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    Class for change password link
+    """
+    def put(self, request):
+        user = request.user
+        print user.first_name
+        try:
+            if user.check_password(request.DATA['oldPassword']):
+                user.set_password(request.DATA['newPassword'])
+                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        except Exception, e:
+            response_data = {}
+            response_data['detail'] = e
+            return HttpResponse(json.dumps(response_data), \
+                status=status.HTTP_400_BAD_REQUEST)

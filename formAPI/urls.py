@@ -30,6 +30,8 @@ urlpatterns = patterns('',
     url(r'^appointments/(?P<pk>[0-9]+)/$',
         views.AppointmentDetail.as_view(),
         name='appointment-detail'),
+    url(r'update-pass/', 
+        views.ChangePasswordView.as_view()),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
