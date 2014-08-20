@@ -118,14 +118,13 @@ class detail_permissions(permissions.BasePermission):
         If user is authenticated or posting it should give permission
         Else it should return false
         """
-        print request.method
         if request.user.is_authenticated():
             return True
         elif request.method == 'PUT':
-            print request.method
-            if request.DATA.get('email', '') == '':
+            try:
+                r_participant = FormAPI.objects.get(pk=view.kwargs['pk'])
+            except Exception, e:
                 return False
-            r_participant = FormAPI.objects.get(email=request.DATA.get('email', ''))
             if not r_participant.completed_initial:
                 return True
         else:
@@ -157,9 +156,6 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
     queryset = FormAPI.objects.all()
     serializer_class = FormAPI_Serializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, )
-    # filter_fields = ('state', 'completed_initial', 'job', \
-    #     'employment', 'income', 'experience', 'hoursOnline', \
-    #     'educationLevel', 'participateTime', 'gender',)
     ordering = ('-completed_initial', '-created')
     ordering_fields = 'name', 'email', 'created', 'id', 'state', \
         'completed_initial'
@@ -366,7 +362,6 @@ class ChangePasswordView(generics.UpdateAPIView):
     """
     def put(self, request):
         user = request.user
-        print user.first_name
         try:
             if user.check_password(request.DATA['oldPassword']):
                 user.set_password(request.DATA['newPassword'])
