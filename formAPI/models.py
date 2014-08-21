@@ -206,22 +206,16 @@ class Appointment(models.Model):
         Sends email once this is done
         """
         super(Appointment, self).save(*args, **kwargs)
-        # if self.hashInit == '':
-        #     hasher = hashlib.sha512()
-        #     hasher.update(self.createHASH())
-        #     self.hashInit = hasher.hexdigest()
-        #     formapi = FormAPI.objects.get(pk = self.id)
-        #     formapi.hashInit = self.hashInit
-        #     formapi.save()
-        #     email = EmailMessage(
-        #         to=[self.email]
-        #     )
-        #     email.template_name = "confirmation email"
-        #     link = self.hashInit
-        #     email.global_merge_vars = {'URL': link}
-        #     email.use_template_subject = True
-        #     email.use_template_from = True
-        #     #email.send()
+        email = EmailMessage(
+            to=[self.participant.email]
+        )
+        email.template_name = "appointment-email"
+        email.global_merge_vars = {'TEST': self.test, \
+            'DATE': self.date.__format__('%A, %B %-d, %Y'), \
+            'TIME': self.time.__format__('%-I:%M %p')}
+        email.use_template_subject = True
+        email.use_template_from = True
+        email.send()
 
     class Meta:
         ordering = ('created',)

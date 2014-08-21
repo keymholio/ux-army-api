@@ -365,6 +365,7 @@ class ChangePasswordView(generics.UpdateAPIView):
         try:
             if user.check_password(request.DATA['oldPassword']):
                 user.set_password(request.DATA['newPassword'])
+                user.save()
                 return HttpResponse(status=status.HTTP_204_NO_CONTENT)
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
         except Exception, e:
