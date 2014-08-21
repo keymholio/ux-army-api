@@ -215,8 +215,7 @@ class Appointment(models.Model):
             'TIME': self.time.__format__('%-I:%M %p')}
         email.use_template_subject = True
         email.use_template_from = True
-        print email.global_merge_vars
-        # email.send()
+        email.send()
 
     class Meta:
         ordering = ('created',)
