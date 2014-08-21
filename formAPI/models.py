@@ -177,6 +177,9 @@ class FormAPI(models.Model):
 
 
 class Test(models.Model):
+    """
+    Overarching test model
+    """
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(
         unique=True,
@@ -195,6 +198,10 @@ class Test(models.Model):
 
 
 class Appointment(models.Model):
+    """
+    Appointment model
+    Requires a test and participant
+    """
     created = models.DateTimeField(auto_now_add=True)
     test = models.ForeignKey(Test, related_name='appointments')
     participant = models.ForeignKey(FormAPI, related_name='participant')
@@ -202,8 +209,7 @@ class Appointment(models.Model):
     time = models.TimeField()
     def save(self, *args, **kwargs):
         """
-        Override of save to make sure hash is created with ID
-        Sends email once this is done
+        Sends confirmation email about appointment
         """
         super(Appointment, self).save(*args, **kwargs)
         email = EmailMessage(
