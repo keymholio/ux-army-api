@@ -363,9 +363,6 @@ class ChangePasswordView(generics.UpdateAPIView):
     def put(self, request):
         user = request.user
         try:
-            print user
-            print type(user)
-            print user.check_password(request.DATA['oldPassword'])
             if user.check_password(request.DATA['oldPassword']):
                 user.set_password(request.DATA['newPassword'])
                 user.save()
