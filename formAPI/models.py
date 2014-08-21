@@ -210,12 +210,13 @@ class Appointment(models.Model):
             to=[self.participant.email]
         )
         email.template_name = "appointment-email"
-        email.global_merge_vars = {'TEST': self.test, \
+        email.global_merge_vars = {'TEST': self.test.title, \
             'DATE': self.date.__format__('%A, %B %-d, %Y'), \
             'TIME': self.time.__format__('%-I:%M %p')}
         email.use_template_subject = True
         email.use_template_from = True
-        email.send()
+        print email.global_merge_vars
+        # email.send()
 
     class Meta:
         ordering = ('created',)
