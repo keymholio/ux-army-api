@@ -82,6 +82,11 @@ PARTICIPATE_TIME_CHOICES = [
     ('Afternoons', 'Afternoons'),
     ('Night time', 'Night time'),
 ]
+
+COMPLETED_CHOICES = [
+    ('Complete', 'Complete'),
+    ('Incomplete', 'Incomplete'),
+]
     
 def get_choices():
     """
@@ -96,7 +101,8 @@ def get_choices():
         HOURS_ONLINE_CHOICES,
         EDUCATION_LEVEL_CHOICES,
         EMPLOYMENT_CHOICES,
-        PARTICIPATE_TIME_CHOICES
+        PARTICIPATE_TIME_CHOICES,
+        COMPLETED_CHOICES
     ]
     var_choices = [
         'genderChoices',
@@ -107,7 +113,8 @@ def get_choices():
         'hoursOnlineChoices',
         'educationLevelChoices',
         'employmentChoices',
-        'participateTimeChoices'
+        'participateTimeChoices',
+        'completedChoices'
     ]
     response = {
         'genderChoices': [],
@@ -120,6 +127,7 @@ def get_choices():
         'employmentChoices': [],
         'participateTimeChoices': [],
         'birthYearChoices': [],
+        'completedChoices': []
     }
     count = 0
     for choice in all_choices:

@@ -162,6 +162,15 @@ class FormAPIList(overload_list, generics.ListCreateAPIView):
         'completed_initial'
     def get_queryset(self):
         search_dict = dict(self.request.QUERY_PARAMS.lists())
+        if 'completed_initial' in search_dict:
+            if len(search_dict['completed_initial']) > 1:
+                if search_dict['completed_initial'][1] == 'Incomplete':
+                    search_dict['completed_initial'][1] = ''
+                if search_dict['completed_initial'][0] == 'Incomplete':
+                    search_dict['completed_initial'][0] = ''
+            else:
+                if search_dict['completed_initial'][0] == 'Incomplete':
+                    search_dict['completed_initial'][0] = ''
         queryset = FormAPI.objects.all()
         if 'state' in search_dict:
             queryset = queryset.filter\
