@@ -32,6 +32,8 @@ urlpatterns = patterns('',
         name='appointment-detail'),
     url(r'update-pass/', 
         views.ChangePasswordView.as_view()),
+    url(r'send-to-friend/', 
+        views.SendToFriendView.as_view()),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
