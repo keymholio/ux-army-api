@@ -3,6 +3,7 @@ Main views class for the UX LABS API
 """
 from collections import defaultdict
 from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.utils.timezone import utc
 from rest_framework import generics, permissions, status, filters
@@ -338,6 +339,7 @@ class TestDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Test.objects.all()
     serializer_class = TestSerializer
 
+
 class AppointmentList(generics.ListCreateAPIView):
     """
     Class for listing out all appointments
@@ -373,3 +375,21 @@ class ChangePasswordView(generics.UpdateAPIView):
             response_data['detail'] = e
             return HttpResponse(json.dumps(response_data), \
                 status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendToFriendView(generics.CreateAPIView):
+    def post(self, request):
+        from_email = request.DATA['fromEmail']
+        from_name = request.DATA['fromName']
+        to_email = request.DATA['toEmail']
+        to_name = request.DATA['toName']
+        email = EmailMessage(
+            to=[to_email],
+            from_email=from_email
+        )
+        email.template_name = "send-to-friend"
+        email.global_merge_vars = {'FROMFRIEND': from_name, \
+            'TOFRIEND': to_name}
+        email.use_template_subject = True
+        email.send()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
