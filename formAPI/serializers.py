@@ -104,19 +104,23 @@ class FormAPI_Serializer_Put(serializers.Serializer):
         choices=choices.STATE_CHOICES
     )
     income = serializers.ChoiceField(
-        choices=choices.INCOME_CHOICES
+        choices=choices.INCOME_CHOICES,
+        required=False
     )
     experience = serializers.ChoiceField(
         choices=choices.EXPERIENCE_CHOICES
     )
     hoursOnline = serializers.ChoiceField(
-        choices=choices.HOURS_ONLINE_CHOICES
+        choices=choices.HOURS_ONLINE_CHOICES,
+        required=False
     )
     educationLevel = serializers.ChoiceField(
-        choices=choices.EDUCATION_LEVEL_CHOICES
+        choices=choices.EDUCATION_LEVEL_CHOICES,
+        required=False
     )
     employment = serializers.ChoiceField(
-        choices=choices.EMPLOYMENT_CHOICES
+        choices=choices.EMPLOYMENT_CHOICES,
+        required=False
     )
     participateTime = serializers.ChoiceField(
         choices=choices.PARTICIPATE_TIME_CHOICES
@@ -234,16 +238,8 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
         ('birthYear' in attrs and attrs['birthYear'] != None)) and\
         ((instance.state != "" and 'state' not in attrs) or\
         ('state' in attrs and attrs['state'] != "")) and\
-        ((instance.income != "" and 'income' not in attrs) or\
-        ('income' in attrs and attrs['income'] != "")) and\
         ((instance.experience != "" and 'experience' not in attrs) or\
         ('experience' in attrs and attrs['experience'] != "")) and\
-        ((instance.hoursOnline != "" and 'hoursOnline' not in attrs) or\
-        ('hoursOnline' in attrs and attrs['hoursOnline'] != ""))and\
-        ((instance.educationLevel != "" and 'educationLevel' not in attrs) or\
-        ('educationLevel' in attrs and attrs['educationLevel'] != "")) and\
-        ((instance.employment != "" and 'employment' not in attrs) or\
-        ('employment' in attrs and attrs['employment'] != ""))and\
         ((instance.participateTime != "" and 'participateTime' not in attrs) or\
         ('participateTime' in attrs and attrs['participateTime'] != "")):
             attrs['completed_initial'] = True
