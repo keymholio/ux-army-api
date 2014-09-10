@@ -63,7 +63,8 @@ class FormAPI_Serializer(serializers.HyperlinkedModelSerializer):
             'id', 'created',
             'name', 'email', 'phone', 'gender', 'job', 'birthYear', 'state',
             'income', 'experience', 'hoursOnline', 'educationLevel',
-            'employment', 'participateTime',  'completed_initial', 'participant'
+            'employment', 'participateTime', 'participateDay',
+            'completed_initial', 'participant'
         )
 
 
@@ -125,6 +126,9 @@ class FormAPI_Serializer_Put(serializers.Serializer):
     participateTime = serializers.ChoiceField(
         choices=choices.PARTICIPATE_TIME_CHOICES
     )
+    participateDay = serializers.ChoiceField(
+        choices=choices.PARTICIPATE_DAY_CHOICES
+    )
     completed_initial = serializers.BooleanField(
         default=True
     )
@@ -147,6 +151,8 @@ class FormAPI_Serializer_Put(serializers.Serializer):
                 attrs.get('educationLevel', instance.educationLevel)
             instance.employment = \
                 attrs.get('employment', instance.employment)
+            instance.participateDay = \
+                attrs.get('participateDay', instance.participateDay)
             instance.participateTime = \
                 attrs.get('participateTime', instance.participateTime)
             instance.completed_initial = \
@@ -213,6 +219,10 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
         choices=choices.PARTICIPATE_TIME_CHOICES,
         required=False
     )
+    participateDay = serializers.ChoiceField(
+        choices=choices.PARTICIPATE_DAY_CHOICES,
+        required=False
+    )
     completed_initial = serializers.BooleanField(
         default=False
     )
@@ -240,6 +250,8 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
         ('state' in attrs and attrs['state'] != "")) and\
         ((instance.experience != "" and 'experience' not in attrs) or\
         ('experience' in attrs and attrs['experience'] != "")) and\
+        ((instance.participateDay != "" and 'participateDay' not in attrs) or\
+        ('participateDay' in attrs and attrs['participateDay'] != "")) and\
         ((instance.participateTime != "" and 'participateTime' not in attrs) or\
         ('participateTime' in attrs and attrs['participateTime'] != "")):
             attrs['completed_initial'] = True
@@ -261,6 +273,8 @@ class FormAPI_Serializer_Put_Validated(serializers.Serializer):
                 attrs.get('employment', instance.employment)
             instance.participateTime = \
                 attrs.get('participateTime', instance.participateTime)
+            instance.participateDay = \
+                attrs.get('participateDay', instance.participateDay)
             instance.completed_initial = \
                 attrs.get('completed_initial', instance.completed_initial)
             return instance

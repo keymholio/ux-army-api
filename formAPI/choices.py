@@ -83,6 +83,16 @@ PARTICIPATE_TIME_CHOICES = [
     ('Night time', 'Night time'),
 ]
 
+PARTICIPATE_DAY_CHOICES = [
+    ('Sunday', 'Sunday'),
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+]
+
 COMPLETED_CHOICES = [
     ('Complete', 'Complete'),
     ('Incomplete', 'Incomplete'),
@@ -102,7 +112,8 @@ def get_choices():
         EDUCATION_LEVEL_CHOICES,
         EMPLOYMENT_CHOICES,
         PARTICIPATE_TIME_CHOICES,
-        COMPLETED_CHOICES
+        COMPLETED_CHOICES,
+        PARTICIPATE_DAY_CHOICES
     ]
     var_choices = [
         'genderChoices',
@@ -114,7 +125,8 @@ def get_choices():
         'educationLevelChoices',
         'employmentChoices',
         'participateTimeChoices',
-        'completedChoices'
+        'completedChoices',
+        'participateDayChoices'
     ]
     response = {
         'genderChoices': [],
@@ -127,7 +139,8 @@ def get_choices():
         'employmentChoices': [],
         'participateTimeChoices': [],
         'birthYearChoices': [],
-        'completedChoices': []
+        'completedChoices': [],
+        'participateDayChoices': []
     }
     count = 0
     for choice in all_choices:

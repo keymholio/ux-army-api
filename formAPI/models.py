@@ -134,6 +134,13 @@ class FormAPI(models.Model):
         choices=choices.PARTICIPATE_TIME_CHOICES
     )
 
+    #Time which the participant wishes to participate
+    participateDay = models.CharField(
+        max_length=10,
+        blank=True,
+        choices=choices.PARTICIPATE_DAY_CHOICES
+    )
+
     #Hash of email (signed using time)
     hashInit = models.CharField(
         max_length=1000, 
